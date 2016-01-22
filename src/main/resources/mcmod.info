@@ -1,0 +1,16 @@
+[
+{
+  "modid": "swaggmod",
+  "name": "Swagg Mod",
+  "description": "Tu voulais du swagg ? Ok.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Iclario"],
+  "credits": "Parce-que c'est swagg le swagg",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

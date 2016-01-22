@@ -45,3 +45,15 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+.gradle/
+CREDITS-fml.txt
+*.lock
+*.log
+eclipse/
+.classpath
+.project
+forge-1.7.10-10.13.4.1558-1.7.10-changelog.txt
+LICENSE-fml.txt
+MinecraftForge-Credits.txt
+MinecraftForge-License.txt
+README.txt
