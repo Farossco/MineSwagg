@@ -17,11 +17,15 @@ import fr.ftnt.swaggmod.common.tools.ItemSwaggiumSword;
 import fr.ftnt.swaggmod.proxy.CommonProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCompressed;
+import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockOre;
+import net.minecraft.block.BlockPane;
 import net.minecraft.block.material.MapColor;
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemDoor;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraftforge.common.MinecraftForge;
@@ -40,12 +44,13 @@ public class SwaggMod
     public static CommonProxy proxy;
 
     // Items declaration
-    public static Item itemIngotSwaggium; // Basic Block
+    public static Item itemIngotSwaggium; // Ingot
     public static Item itemHelmetSwaggium, itemChestplateSwaggium, itemLeggingsSwaggium, itemBootsSwaggium; // Armor
+    public static Item itemDoorSwaggium, itemArmorHorseSwaggium; // Miscellaneous
     public static Item itemAxeSwaggium, itemSwordSwaggium, itemPickaxeSwaggium, itemShovelSwaggium, itemHoeSwaggium; // Tools
 
     // Blocks declaration
-    public static Block blockOreSwaggium, blockBlockSwaggium; // Basic Blocks
+    public static Block blockOreSwaggium, blockBlockSwaggium, blockDoorSwaggium, blockFenceSwaggium; // Basic Blocks
 
     // Materials Declaration
     public static ArmorMaterial armorSwaggium = EnumHelper.addArmorMaterial("armorSwaggium", 15, new int[] {2, 6, 5, 2}, 30);
@@ -68,6 +73,11 @@ public class SwaggMod
         itemPickaxeSwaggium = new ItemSwaggiumPickaxe(toolSwaggium).setUnlocalizedName("pickaxeSwaggium").setTextureName(MODID + ":swaggium_pickaxe");
         itemShovelSwaggium = new ItemSwaggiumShovel(toolSwaggium).setUnlocalizedName("shovelSwaggium").setTextureName(MODID + ":swaggium_shovel");
         itemHoeSwaggium = new ItemSwaggiumHoe(toolSwaggium).setUnlocalizedName("hoeSwaggium").setTextureName(MODID + ":swaggium_hoe");
+        // Miscellaneous
+        itemDoorSwaggium = new ItemDoorSwaggium(Material.iron).setUnlocalizedName("doorSwaggium").setTextureName(MODID + ":door_swaggium");
+        itemArmorHorseSwaggium = new Item().setUnlocalizedName("HorseArmorSwaggium").setMaxStackSize(1).setCreativeTab(CreativeTabs.tabMisc).setTextureName(MODID + ":swaggium_horse_armor");
+        
+        
         // Registering
         GameRegistry.registerItem(itemIngotSwaggium, "item_swaggium_ingot");
         GameRegistry.registerItem(itemHelmetSwaggium, "item_swaggium_helmet");
@@ -79,14 +89,21 @@ public class SwaggMod
         GameRegistry.registerItem(itemPickaxeSwaggium, "item_swaggium_pickaxe");
         GameRegistry.registerItem(itemShovelSwaggium, "item_swaggium_shovel");
         GameRegistry.registerItem(itemHoeSwaggium, "item_swaggium_hoe");
-
+        GameRegistry.registerItem(itemDoorSwaggium, "item_door_swaggium");
+        GameRegistry.registerItem(itemArmorHorseSwaggium, "item_swaggium_horse_armor");
+        
         // -- Blocks --
         // Basic blocks
         blockOreSwaggium = new BlockOre().setHardness(3.0F).setResistance(5.0F).setStepSound(Block.soundTypePiston).setBlockName("oreSwaggium").setBlockTextureName(MODID + ":swaggium_ore");
         blockBlockSwaggium = new BlockCompressed(MapColor.lapisColor).setHardness(5.0F).setResistance(10.0F).setStepSound(Block.soundTypeMetal).setBlockName("blockSwaggium").setBlockTextureName(MODID + ":swaggium_block");
+        blockDoorSwaggium = new BlockDoorSwaggium(Material.iron).setHardness(5.0F).setStepSound(Block.soundTypeMetal).setBlockName("doorSwaggium").setBlockTextureName(MODID + ":door_swaggium");
+        blockFenceSwaggium = new BlockPaneSwaggium(MODID + ":swaggium_bars", MODID + ":swaggium_bars", Material.iron, true/* (do Tile Drop ?) */).setHardness(5.0F).setResistance(10.0F).setStepSound(Block.soundTypeMetal).setBlockName("fenceSwaggium");
         // Registering
         GameRegistry.registerBlock(blockOreSwaggium, "block_swaggium");
         GameRegistry.registerBlock(blockBlockSwaggium, "block_antiswagger");
+        GameRegistry.registerBlock(blockDoorSwaggium, "block_swaggium_door");
+        GameRegistry.registerBlock(blockFenceSwaggium, "block_swaggium_fence");
+        
     }
 
     @EventHandler

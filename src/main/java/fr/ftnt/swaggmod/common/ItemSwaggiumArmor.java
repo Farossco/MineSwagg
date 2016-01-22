@@ -21,9 +21,9 @@ public class ItemSwaggiumArmor extends ItemArmor
     { // --- Must be modified ---
         if(slot == 2) // Leggings texture (layer_2)
         {
-            return null;
+            return SwaggMod.MODID + ":/textures/models/armor/swaggium_layer_2.png";
         }
-        return null; // Other textures (Layer_1)
+        return SwaggMod.MODID + ":/textures/models/armor/swaggium_layer_1.png"; // Other texture (Layer_1)
     }
 
     public void onArmorTick(World world, EntityPlayer player, ItemStack stack)

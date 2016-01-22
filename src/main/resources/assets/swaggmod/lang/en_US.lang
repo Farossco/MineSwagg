@@ -8,11 +8,15 @@ item.swordSwaggium.name=Swaggium Sword
 item.pickaxeSwaggium.name=Swaggium Pickaxe
 item.shovelSwaggium.name=Swaggium Shovel
 item.hoeSwaggium.name=Swaggium Hoe
-
+item.doorSwaggium.name=Swaggium Door
+item.HorseArmorSwaggium.name=Swaggium Horse Armor (Unusable)
 item.ingotSwaggium.name=Swaggium Ingot
 
 tile.blockSwaggium.name=Swaggium Block
 tile.oreSwaggium.name=Swaggium Ore
+tile.doorSwaggium.name=Swaggium Door
+tile.fenceSwaggium.name=Swaggium Bars
+
 
 entity.swagged.name=[ERROR] Too many Swagg !
 
