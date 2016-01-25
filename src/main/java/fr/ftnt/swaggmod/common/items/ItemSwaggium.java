@@ -1,4 +1,4 @@
-package fr.ftnt.swaggmod.common;
+package fr.ftnt.swaggmod.common.items;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;

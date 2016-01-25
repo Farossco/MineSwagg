@@ -1,4 +1,4 @@
-package fr.ftnt.swaggmod.common.tools;
+package fr.ftnt.swaggmod.common.items;
 
 import fr.ftnt.swaggmod.common.SwaggMod;
 import net.minecraft.item.ItemHoe;
@@ -7,14 +7,16 @@ import net.minecraft.item.ItemStack;
 public class ItemSwaggiumHoe extends ItemHoe
 {
 
-    public ItemSwaggiumHoe(ToolMaterial material)
+    public ItemSwaggiumHoe()
     {
-        super(material);
+        super(SwaggMod.toolSwaggium);
+        this.setUnlocalizedName("hoeSwaggium");
+        this.setTextureName(SwaggMod.MODID + ":swaggium_hoe");
     }
 
     public boolean getIsRepairable(ItemStack input, ItemStack repair)
     {
-        if(repair.getItem() == SwaggMod.itemIngotSwaggium)
+        if(repair.getItem() == SwaggMod.itemSwaggiumIngot)
         {
             return true;
         }

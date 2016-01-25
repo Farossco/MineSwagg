@@ -1,9 +1,10 @@
-package fr.ftnt.swaggmod.common;
+package fr.ftnt.swaggmod.common.blocks;
 
 import java.util.Random;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import fr.ftnt.swaggmod.common.SwaggMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.material.Material;
@@ -11,25 +12,26 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
 
-public class BlockDoorSwaggium extends BlockDoor
+public class BlockSwaggiumDoor extends BlockDoor
 {
 
-    protected BlockDoorSwaggium(Material material)
+    public BlockSwaggiumDoor(Material material)
     {
         super(material);
-        float f = 0.5F;
-        float f1 = 1.0F;
-        this.setBlockBounds(0.5F - f, 0.0F, 0.5F - f, 0.5F + f, f1, 0.5F + f);
+        this.setHardness(5.0F);
+        this.setStepSound(Block.soundTypeMetal);
+        this.setBlockName("doorSwaggium");
+        this.setBlockTextureName(SwaggMod.MODID + ":door_swaggium");
     }
     
     public Item getItemDropped(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
     {
-        return (p_149650_1_ & 8) != 0 ? null : (SwaggMod.itemDoorSwaggium);
+        return (p_149650_1_ & 8) != 0 ? null : (SwaggMod.itemSwaggiumDoor);
     }
     
     @SideOnly(Side.CLIENT)
     public Item getItem(World p_149694_1_, int p_149694_2_, int p_149694_3_, int p_149694_4_)
     {
-        return SwaggMod.itemDoorSwaggium;
+        return SwaggMod.itemSwaggiumDoor;
     }
 }

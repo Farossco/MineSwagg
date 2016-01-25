@@ -16,7 +16,10 @@ tile.blockSwaggium.name=Swaggium Block
 tile.oreSwaggium.name=Swaggium Ore
 tile.doorSwaggium.name=Swaggium Door
 tile.fenceSwaggium.name=Swaggium Bars
-
+tile.metadataTuto.block1.name=1
+tile.metadataTuto.block2.name=2
+tile.metadataTuto.block3.name=3
+tile.metadataTuto.block4.name=4
 
 entity.swagged.name=[ERROR] Too many Swagg !
 

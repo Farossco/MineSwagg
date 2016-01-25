@@ -17,7 +17,7 @@ public class LivingEventHandler
         ItemStack chestplate = event.entityLiving.getEquipmentInSlot(3);
         ItemStack helmet = event.entityLiving.getEquipmentInSlot(4);
 
-        if(boots != null && boots.getItem() == SwaggMod.itemBootsSwaggium && leggings != null && leggings.getItem() == SwaggMod.itemLeggingsSwaggium && chestplate != null && chestplate.getItem() == SwaggMod.itemChestplateSwaggium && helmet != null && helmet.getItem() == SwaggMod.itemHelmetSwaggium)
+        if(boots != null && boots.getItem() == SwaggMod.itemSwaggiumBoots && leggings != null && leggings.getItem() == SwaggMod.itemSwaggiumLeggings && chestplate != null && chestplate.getItem() == SwaggMod.itemSwaggiumChestplate && helmet != null && helmet.getItem() == SwaggMod.itemSwaggiumHelmet)
         {
             if(event.source.getEntity() != null && event.source.getEntity() instanceof EntityCreeper)
             {
@@ -31,7 +31,7 @@ public class LivingEventHandler
     public void onLivingFall(LivingFallEvent event)
     {
         ItemStack boots = event.entityLiving.getEquipmentInSlot(1);
-        if(boots != null && boots.getItem() == SwaggMod.itemBootsSwaggium)
+        if(boots != null && boots.getItem() == SwaggMod.itemSwaggiumBoots)
         {
             boots.damageItem(MathHelper.floor_float(event.distance), event.entityLiving);
             //event.entityLiving.worldObj.newExplosion(event.entityLiving, event.entityLiving.posX, event.entityLiving.posY, event.entityLiving.posZ, 2, true, true);

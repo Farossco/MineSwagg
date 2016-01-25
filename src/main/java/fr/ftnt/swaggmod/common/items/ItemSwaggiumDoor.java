@@ -1,5 +1,6 @@
-package fr.ftnt.swaggmod.common;
+package fr.ftnt.swaggmod.common.items;
 
+import fr.ftnt.swaggmod.common.SwaggMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -10,15 +11,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
-public class ItemDoorSwaggium extends ItemDoor
+public class ItemSwaggiumDoor extends ItemDoor
 {
 
     private Material doorMaterial;
     private static final String __OBFID = "CL_00000020";
     
-    public ItemDoorSwaggium(Material material)
+    public ItemSwaggiumDoor()
     {
-        super(material);
+        super(Material.iron);
+        this.setUnlocalizedName("doorSwaggium");
+        this.setTextureName(SwaggMod.MODID + ":door_swaggium");
     }
 
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int p_77648_4_, int p_77648_5_, int p_77648_6_, int p_77648_7_, float p_77648_8_, float p_77648_9_, float p_77648_10_)
@@ -32,7 +35,7 @@ public class ItemDoorSwaggium extends ItemDoor
             ++p_77648_5_;
             Block block;
 
-            block = SwaggMod.blockDoorSwaggium;
+            block = SwaggMod.BlockSwaggiumDoor;
 
             if (player.canPlayerEdit(p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_, stack) && player.canPlayerEdit(p_77648_4_, p_77648_5_ + 1, p_77648_6_, p_77648_7_, stack))
             {
