@@ -15,9 +15,9 @@ import net.minecraft.world.World;
 public class BlockSwaggiumDoor extends BlockDoor
 {
 
-    public BlockSwaggiumDoor(Material material)
+    public BlockSwaggiumDoor()
     {
-        super(material);
+        super(Material.iron);
         this.setHardness(5.0F);
         this.setStepSound(Block.soundTypeMetal);
         this.setBlockName("doorSwaggium");

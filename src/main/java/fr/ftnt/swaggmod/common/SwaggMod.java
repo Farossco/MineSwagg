@@ -57,6 +57,7 @@ public class SwaggMod
     // Blocks declaration
     public static Block blockSwaggiumOre, blockSwaggiumCompressed, BlockSwaggiumDoor, blockSwaggiumFence; // Basic Blocks
     public static Block blockTutoMetadata; // Tuto Blocks
+    public static Block blockSwaggiumChest; // Iron Chest integration
 
     // Materials Declaration
     public static ArmorMaterial armorSwaggium = EnumHelper.addArmorMaterial("armorSwaggium", 15, new int[] {2, 6, 5, 2}, 30);
@@ -65,7 +66,7 @@ public class SwaggMod
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        // -- Items --
+        // --------------------------- Items ---------------------------
         // Basic Items
         itemSwaggiumIngot = new itemSwaggiumIngot();
         // Armor
@@ -81,7 +82,6 @@ public class SwaggMod
         ItemSwaggiumHoe = new ItemSwaggiumHoe();
         // Miscellaneous
         itemSwaggiumDoor = new ItemSwaggiumDoor();
-     // itemArmorHorseSwaggium = new Item().setUnlocalizedName("HorseArmorSwaggium").setMaxStackSize(1).setCreativeTab(CreativeTabs.tabMisc).setTextureName(MODID + ":swaggium_horse_armor");
 
         // Registering
         GameRegistry.registerItem(itemSwaggiumIngot, "item_swaggium_ingot");
@@ -95,31 +95,39 @@ public class SwaggMod
         GameRegistry.registerItem(ItemSwaggiumShovel, "item_swaggium_shovel");
         GameRegistry.registerItem(ItemSwaggiumHoe, "item_swaggium_hoe");
         GameRegistry.registerItem(itemSwaggiumDoor, "item_door_swaggium");
-     // GameRegistry.registerItem(itemArmorHorseSwaggium, "item_swaggium_horse_armor");
 
-        // -- Blocks --
+        // --------------------------- Blocks ---------------------------
         // Basic blocks
         blockSwaggiumOre = new BlockSwaggiumOre();
-        blockSwaggiumCompressed = new BlockSwaggiumCompressed(MapColor.lapisColor);
-        BlockSwaggiumDoor = new BlockSwaggiumDoor(Material.iron);
+        blockSwaggiumCompressed = new BlockSwaggiumCompressed();
+        BlockSwaggiumDoor = new BlockSwaggiumDoor();
         blockSwaggiumFence = new BlockSwaggiumFence();
         // Tuto Blocks
         blockTutoMetadata = new BlockTutoMetadata();
+        // Iron Chest integration
+        blockSwaggiumChest = new BlockSwaggiumChest();
         // Registering
         GameRegistry.registerBlock(blockSwaggiumOre, "block_swaggium");
         GameRegistry.registerBlock(blockSwaggiumCompressed, "block_antiswagger");
         GameRegistry.registerBlock(BlockSwaggiumDoor, "block_swaggium_door");
         GameRegistry.registerBlock(blockSwaggiumFence, "block_swaggium_fence");
         GameRegistry.registerBlock(blockTutoMetadata, ItemBlockSwaggiumMetadata.class, "block_tuto_metadata");
+        GameRegistry.registerBlock(blockSwaggiumChest, "block_swaggium_chest");
+
+       
+
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
         addEntity(EntitySwagged.class, "swagged", 420, 0xd4192b, 0x522dbc);
-
         MinecraftForge.EVENT_BUS.register(new LivingEventHandler());
         proxy.registerRender();
+        
+        
+        // --------------------------- TileEntities ---------------------------
+        GameRegistry.registerTileEntity(fr.ftnt.swaggmod.common.TileEntitySwaggiumChest.class, MODID + ":SwaggiumChest");
     }
 
     @EventHandler

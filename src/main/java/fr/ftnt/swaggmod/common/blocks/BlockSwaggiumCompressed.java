@@ -8,9 +8,9 @@ import net.minecraft.block.material.MapColor;
 public class BlockSwaggiumCompressed extends BlockCompressed
 {
 
-    public BlockSwaggiumCompressed(MapColor color)
+    public BlockSwaggiumCompressed()
     {
-        super(color);
+        super(MapColor.lapisColor);
         this.setHardness(5.0F);
         this.setResistance(10.0F);
         this.setStepSound(Block.soundTypeMetal);

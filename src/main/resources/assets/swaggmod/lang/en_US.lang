@@ -13,6 +13,7 @@ item.HorseArmorSwaggium.name=Swaggium Horse Armor (Unusable)
 item.ingotSwaggium.name=Swaggium Ingot
 
 tile.blockSwaggium.name=Swaggium Block
+tile.blockSwaggiumChest.name=Swaggium Chest
 tile.oreSwaggium.name=Swaggium Ore
 tile.doorSwaggium.name=Swaggium Door
 tile.fenceSwaggium.name=Swaggium Bars
@@ -26,3 +27,5 @@ entity.swagged.name=[ERROR] Too many Swagg !
 sword.mode.message.0=Burn Players
 sword.mode.message.1=Burn mobs
 sword.mode.message.2=Burn animals
+
+chat.SwaggiumChest.number=Number= %d
