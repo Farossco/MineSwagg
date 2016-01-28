@@ -7,3 +7,5 @@ lib
 .classpath
 .project
 *.txt
+sources
+lib

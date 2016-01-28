@@ -1,14 +1,14 @@
 [
 {
-  "modid": "swaggmod",
-  "name": "Swagg Mod",
-  "description": "Tu voulais du swagg ? Ok.",
+  "modid": "MineSwagg",
+  "name": "MineSwagg",
+  "description": "I heard you wanted some swagg ? Here it is.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
   "authorList": ["Iclario"],
-  "credits": "Parce-que c'est swagg le swagg",
+  "credits": "Because swagg is swagg",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
