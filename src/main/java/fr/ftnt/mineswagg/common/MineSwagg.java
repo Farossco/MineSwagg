@@ -44,7 +44,7 @@ public class MineSwagg
     @Instance(MODID)
     public static MineSwagg instance;
 
-    @SidedProxy(clientSide = "fr.ftnt.swaggmod.proxy.ClientProxy", serverSide = "fr.ftnt.swaggmod.proxy.CommonProxy")
+    @SidedProxy(clientSide = "fr.ftnt.mineswagg.proxy.ClientProxy", serverSide = "fr.ftnt.mineswagg.proxy.CommonProxy")
     public static CommonProxy proxy;
 
     // Items declaration
