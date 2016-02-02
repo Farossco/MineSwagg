@@ -43,7 +43,7 @@ minecraft {
 dependencies {
 	compile "cpw.mods:ironchest:1.7.10-6.0.62.742:deobf"
 }
- 
+
 processResources
 {
     // we're omitting the .xcf files - they're development only
