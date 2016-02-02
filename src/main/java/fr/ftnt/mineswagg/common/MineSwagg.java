@@ -74,7 +74,7 @@ public class MineSwagg
     {
         Version.init(event.getVersionProperties());
         event.getModMetadata().version = Version.fullVersionString();
-        
+
         // --------------------------- Items ---------------------------
         // Basic Items
         itemSwaggiumIngot = new itemSwaggiumIngot();
@@ -145,14 +145,14 @@ public class MineSwagg
         // --------------------------- GUI ---------------------------
         // NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandlerSwaggium());
         registerRecipes();
-        
-        
-        if(Loader.isModLoaded("ironchest"))
-        {
-            blockSwaggiumChest = new BlockSwaggiumChest();
-            GameRegistry.registerBlock(blockSwaggiumChest, "block_swaggium_chest");
-        }
 
+        /* I'm gonna get back on this soon
+         * if(Loader.isModLoaded("ironchest"))
+         * {
+         * blockSwaggiumChest = new BlockSwaggiumChest();
+         * GameRegistry.registerBlock(blockSwaggiumChest, "block_swaggium_chest");
+         * }
+         */
     }
 
     private void registerRecipes()
