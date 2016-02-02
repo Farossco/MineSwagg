@@ -1,5 +1,6 @@
 package fr.ftnt.mineswagg.common;
 
+import fr.ftnt.mineswagg.common.entities.EntitySwagged;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.entity.EntityLiving;

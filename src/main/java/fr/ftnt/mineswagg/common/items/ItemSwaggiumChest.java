@@ -1,4 +1,4 @@
-package fr.ftnt.mineswagg.common;
+package fr.ftnt.mineswagg.common.items;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;

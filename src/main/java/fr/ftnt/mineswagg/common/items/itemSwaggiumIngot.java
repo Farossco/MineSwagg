@@ -1,5 +1,6 @@
-package fr.ftnt.mineswagg.common;
+package fr.ftnt.mineswagg.common.items;
 
+import fr.ftnt.mineswagg.common.MineSwagg;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 

@@ -1,86 +1,378 @@
 package fr.ftnt.mineswagg.common;
 
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockChest;
-import net.minecraft.crash.CrashReportCategory;
+import cpw.mods.ironchest.BlockIronChest;
+import cpw.mods.ironchest.ContainerIronChest;
+import cpw.mods.ironchest.IronChest;
+import cpw.mods.ironchest.ItemChestChanger;
+import cpw.mods.ironchest.PacketHandler;
+import cpw.mods.ironchest.TileEntityIronChest;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryLargeChest;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
 
-public class TileEntitySwaggiumChest extends TileEntity implements IInventory
+public class TileEntitySwaggiumChest extends TileEntityIronChest
 {
-    private ItemStack[] chestContents = new ItemStack[9*9];
-    public float lidAngle;
+    private int ticksSinceSync = -1;
     public float prevLidAngle;
-    public int numPlayersUsing;
-    private int ticksSinceSync;
-    private int cachedChestType;
-    private String customName;
-    private byte direction;
+    public float lidAngle;
+    private int numUsingPlayers;
+    private int size = 108;
+    private IronChestType type;
+    private String name="Iron Chest";
+    public ItemStack[] chestContents;
+    private ItemStack[] topStacks;
+    private int facing;
+    private boolean inventoryTouched;
+    private boolean hadStuff;
 
     public TileEntitySwaggiumChest()
     {
-        this.cachedChestType = -1;
+        this(IronChestType.DIAMOND);
     }
 
-    @SideOnly(Side.CLIENT)
-    public TileEntitySwaggiumChest(int p_i2350_1_)
+    protected TileEntitySwaggiumChest(IronChestType type)
     {
-        this.cachedChestType = p_i2350_1_;
+        super();
+        this.chestContents = new ItemStack[getSizeInventory()];
+        this.topStacks = new ItemStack[8];
     }
 
-    public int getSizeInventory()
+    public ItemStack[] getContents()
     {
-        return 9*9;
+        return chestContents;
     }
 
-    public ItemStack getStackInSlot(int i)
+    public int getFacing()
     {
-        return this.chestContents[i];
+        return this.facing;
     }
 
-    public ItemStack decrStackSize(int p_70298_1_, int p_70298_2_)
+    @Override
+    public void markDirty()
     {
-        if (this.chestContents[p_70298_1_] != null)
+        super.markDirty();
+        sortTopStacks();
+    }
+
+    protected void sortTopStacks()
+    {
+        if (!type.isTransparent() || (worldObj != null && worldObj.isRemote))
         {
-            ItemStack itemstack;
-
-            if (this.chestContents[p_70298_1_].stackSize <= p_70298_2_)
+            return;
+        }
+        ItemStack[] tempCopy = new ItemStack[getSizeInventory()];
+        boolean hasStuff = false;
+        int compressedIdx = 0;
+        mainLoop: for (int i = 0; i < getSizeInventory(); i++)
+        {
+            if (chestContents[i] != null)
             {
-                itemstack = this.chestContents[p_70298_1_];
-                this.chestContents[p_70298_1_] = null;
-                this.markDirty();
-                return itemstack;
+                for (int j = 0; j < compressedIdx; j++)
+                {
+                    if (tempCopy[j].isItemEqual(chestContents[i]))
+                    {
+                        tempCopy[j].stackSize += chestContents[i].stackSize;
+                        continue mainLoop;
+                    }
+                }
+                tempCopy[compressedIdx++] = chestContents[i].copy();
+                hasStuff = true;
+            }
+        }
+        if (!hasStuff && hadStuff)
+        {
+            hadStuff = false;
+            for (int i = 0; i < topStacks.length; i++)
+            {
+                topStacks[i] = null;
+            }
+            if (worldObj != null)
+            {
+                worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            }
+            return;
+        }
+        hadStuff = true;
+        Arrays.sort(tempCopy, new Comparator<ItemStack>() {
+            @Override
+            public int compare(ItemStack o1, ItemStack o2)
+            {
+                if (o1 == null)
+                {
+                    return 1;
+                }
+                else if (o2 == null)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return o2.stackSize - o1.stackSize;
+                }
+            }
+        });
+        int p = 0;
+        for (int i = 0; i < tempCopy.length; i++)
+        {
+            if (tempCopy[i] != null && tempCopy[i].stackSize > 0)
+            {
+                topStacks[p++] = tempCopy[i];
+                if (p == topStacks.length)
+                {
+                    break;
+                }
+            }
+        }
+        for (int i = p; i < topStacks.length; i++)
+        {
+            topStacks[i] = null;
+        }
+        if (worldObj != null)
+        {
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        }
+    }
+
+    @Override
+    public void updateEntity()
+    {
+        super.updateEntity();
+        // Resynchronize clients with the server state
+        if (worldObj != null && !this.worldObj.isRemote && this.numUsingPlayers != 0 && (this.ticksSinceSync + this.xCoord + this.yCoord + this.zCoord) % 200 == 0)
+        {
+            this.numUsingPlayers = 0;
+            float var1 = 5.0F;
+            @SuppressWarnings("unchecked")
+            List<EntityPlayer> var2 = this.worldObj.getEntitiesWithinAABB(EntityPlayer.class, AxisAlignedBB.getBoundingBox((double)((float)this.xCoord - var1), (double)((float)this.yCoord - var1), (double)((float)this.zCoord - var1), (double)((float)(this.xCoord + 1) + var1), (double)((float)(this.yCoord + 1) + var1), (double)((float)(this.zCoord + 1) + var1)));
+
+            for (EntityPlayer var4 : var2) {
+                if (var4.openContainer instanceof ContainerIronChest) {
+                    ++this.numUsingPlayers;
+                }
+            }
+        }
+
+        if (worldObj != null && !worldObj.isRemote && ticksSinceSync < 0)
+        {
+            worldObj.addBlockEvent(xCoord, yCoord, zCoord, IronChest.ironChestBlock, 3, ((numUsingPlayers << 3) & 0xF8) | (facing & 0x7));
+        }
+        if (!worldObj.isRemote && inventoryTouched)
+        {
+            inventoryTouched = false;
+            sortTopStacks();
+        }
+
+        this.ticksSinceSync++;
+        prevLidAngle = lidAngle;
+        float f = 0.1F;
+        if (numUsingPlayers > 0 && lidAngle == 0.0F)
+        {
+            double d = (double) xCoord + 0.5D;
+            double d1 = (double) zCoord + 0.5D;
+            worldObj.playSoundEffect(d, (double) yCoord + 0.5D, d1, "random.chestopen", 0.5F, worldObj.rand.nextFloat() * 0.1F + 0.9F);
+        }
+        if (numUsingPlayers == 0 && lidAngle > 0.0F || numUsingPlayers > 0 && lidAngle < 1.0F)
+        {
+            float f1 = lidAngle;
+            if (numUsingPlayers > 0)
+            {
+                lidAngle += f;
             }
             else
             {
-                itemstack = this.chestContents[p_70298_1_].splitStack(p_70298_2_);
+                lidAngle -= f;
+            }
+            if (lidAngle > 1.0F)
+            {
+                lidAngle = 1.0F;
+            }
+            float f2 = 0.5F;
+            if (lidAngle < f2 && f1 >= f2)
+            {
+                double d2 = (double) xCoord + 0.5D;
+                double d3 = (double) zCoord + 0.5D;
+                worldObj.playSoundEffect(d2, (double) yCoord + 0.5D, d3, "random.chestclosed", 0.5F, worldObj.rand.nextFloat() * 0.1F + 0.9F);
+            }
+            if (lidAngle < 0.0F)
+            {
+                lidAngle = 0.0F;
+            }
+        }
+    }
 
-                if (this.chestContents[p_70298_1_].stackSize == 0)
+    @Override
+    public boolean receiveClientEvent(int i, int j)
+    {
+        if (i == 1)
+        {
+            numUsingPlayers = j;
+        }
+        else if (i == 2)
+        {
+            facing = (byte) j;
+        }
+        else if (i == 3)
+        {
+            facing = (byte) (j & 0x7);
+            numUsingPlayers = (j & 0xF8) >> 3;
+        }
+        return true;
+    }
+
+    public void setFacing(int facing2)
+    {
+        this.facing = facing2;
+    }
+
+    public TileEntityIronChest applyUpgradeItem(ItemChestChanger itemChestChanger)
+    {
+        if (numUsingPlayers > 0)
+        {
+            return null;
+        }
+        if (!itemChestChanger.getType().canUpgrade(this.getType()))
+        {
+            return null;
+        }
+        TileEntitySwaggiumChest newEntity = (TileEntitySwaggiumChest)IronChestType.makeEntity(itemChestChanger.getTargetChestOrdinal(getType().ordinal()));
+        int newSize = newEntity.chestContents.length;
+        System.arraycopy(chestContents, 0, newEntity.chestContents, 0, Math.min(newSize, chestContents.length));
+        BlockIronChest block = IronChest.ironChestBlock;
+        block.dropContent(newSize, this, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
+        newEntity.setFacing(facing);
+        newEntity.sortTopStacks();
+        newEntity.ticksSinceSync = -1;
+        return newEntity;
+    }
+
+    public ItemStack[] getTopItemStacks()
+    {
+        return topStacks;
+    }
+
+    public TileEntityIronChest updateFromMetadata(int l)
+    {
+        if (worldObj != null && worldObj.isRemote)
+        {
+            if (l != type.ordinal())
+            {
+                worldObj.setTileEntity(xCoord, yCoord, zCoord, IronChestType.makeEntity(l));
+                return (TileEntityIronChest) worldObj.getTileEntity(xCoord, yCoord, zCoord);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public Packet getDescriptionPacket()
+    {
+        return PacketHandler.getPacket(this);
+    }
+
+    public void handlePacketData(int typeData, ItemStack[] intData)
+    {
+        TileEntitySwaggiumChest chest = this;
+        if (this.type.ordinal() != typeData)
+        {
+            chest = (TileEntitySwaggiumChest)updateFromMetadata(typeData);
+        }
+        if (IronChestType.values()[typeData].isTransparent() && intData != null)
+        {
+            int pos = 0;
+            for (int i = 0; i < chest.topStacks.length; i++)
+            {
+                if (intData[pos] != null)
                 {
-                    this.chestContents[p_70298_1_] = null;
+                    chest.topStacks[i] = intData[pos];
                 }
+                else
+                {
+                    chest.topStacks[i] = null;
+                }
+                pos ++;
+            }
+        }
+    }
 
-                this.markDirty();
+    public ItemStack[] buildItemStackDataList()
+    {
+        if (type.isTransparent())
+        {
+            ItemStack[] sortList = new ItemStack[topStacks.length];
+            int pos = 0;
+            for (ItemStack is : topStacks)
+            {
+                if (is != null)
+                {
+                    sortList[pos++] = is;
+                }
+                else
+                {
+                    sortList[pos++] = null;
+                }
+            }
+            return sortList;
+        }
+        return null;
+    }
+
+    public void setMaxStackSize(int size)
+    {
+
+    }
+
+    public void wasPlaced(EntityLivingBase entityliving, ItemStack itemStack)
+    {
+    }
+
+    public void removeAdornments()
+    {
+
+    }
+    
+    @Override
+    public int getSizeInventory()
+    {
+        return this.size;
+    }
+
+    @Override
+    public ItemStack getStackInSlot(int i)
+    {
+        inventoryTouched = true;
+        return chestContents[i];
+    }
+
+    @Override
+    public ItemStack decrStackSize(int i, int j)
+    {
+        if (chestContents[i] != null)
+        {
+            if (chestContents[i].stackSize <= j)
+            {
+                ItemStack itemstack = chestContents[i];
+                chestContents[i] = null;
+                markDirty();
                 return itemstack;
             }
+            ItemStack itemstack1 = chestContents[i].splitStack(j);
+            if (chestContents[i].stackSize == 0)
+            {
+                chestContents[i] = null;
+            }
+            markDirty();
+            return itemstack1;
         }
         else
         {
@@ -88,13 +380,14 @@ public class TileEntitySwaggiumChest extends TileEntity implements IInventory
         }
     }
 
-    public ItemStack getStackInSlotOnClosing(int p_70304_1_)
+    @Override
+    public ItemStack getStackInSlotOnClosing(int par1)
     {
-        if (this.chestContents[p_70304_1_] != null)
+        if (this.chestContents[par1] != null)
         {
-            ItemStack itemstack = this.chestContents[p_70304_1_];
-            this.chestContents[p_70304_1_] = null;
-            return itemstack;
+            ItemStack var2 = this.chestContents[par1];
+            this.chestContents[par1] = null;
+            return var2;
         }
         else
         {
@@ -102,255 +395,109 @@ public class TileEntitySwaggiumChest extends TileEntity implements IInventory
         }
     }
 
-    public void setInventorySlotContents(int p_70299_1_, ItemStack p_70299_2_)
+    @Override
+    public void setInventorySlotContents(int i, ItemStack itemstack)
     {
-        this.chestContents[p_70299_1_] = p_70299_2_;
-
-        if (p_70299_2_ != null && p_70299_2_.stackSize > this.getInventoryStackLimit())
+        chestContents[i] = itemstack;
+        if (itemstack != null && itemstack.stackSize > getInventoryStackLimit())
         {
-            p_70299_2_.stackSize = this.getInventoryStackLimit();
+            itemstack.stackSize = getInventoryStackLimit();
         }
-
-        this.markDirty();
+        markDirty();
     }
 
+    @Override
     public String getInventoryName()
     {
-        return this.hasCustomInventoryName() ? this.customName : "SwaggiumChest";
+        return this.name;
     }
 
+    @Override
     public boolean hasCustomInventoryName()
     {
-        return this.customName != null && this.customName.length() > 0;
+        return false;
     }
 
-    public void setCustomName(String customName)
-    {
-        this.customName = customName;
-    }
-
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-        NBTTagList nbttaglist = compound.getTagList("Items", 10);
-        this.chestContents = new ItemStack[this.getSizeInventory()];
-
-        if (compound.hasKey("CustomName", 8))
-        {
-            this.customName = compound.getString("CustomName");
-        }
-
-        for (int i = 0; i < nbttaglist.tagCount(); ++i)
-        {
-            NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
-            int j = nbttagcompound1.getByte("Slot") & 255;
-
-            if (j >= 0 && j < this.chestContents.length)
-            {
-                this.chestContents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
-            }
-        }
-    }
-
-    public void writeToNBT(NBTTagCompound p_145841_1_)
-    {
-        super.writeToNBT(p_145841_1_);
-        NBTTagList nbttaglist = new NBTTagList();
-
-        for (int i = 0; i < this.chestContents.length; ++i)
-        {
-            if (this.chestContents[i] != null)
-            {
-                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-                nbttagcompound1.setByte("Slot", (byte)i);
-                this.chestContents[i].writeToNBT(nbttagcompound1);
-                nbttaglist.appendTag(nbttagcompound1);
-            }
-        }
-
-        p_145841_1_.setTag("Items", nbttaglist);
-
-        if (this.hasCustomInventoryName())
-        {
-            p_145841_1_.setString("CustomName", this.customName);
-        }
-    }
-
+    @Override
     public int getInventoryStackLimit()
     {
         return 64;
     }
 
-    public boolean isUseableByPlayer(EntityPlayer p_70300_1_)
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer entityplayer)
     {
-        return this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : p_70300_1_.getDistanceSq((double)this.xCoord + 0.5D, (double)this.yCoord + 0.5D, (double)this.zCoord + 0.5D) <= 64.0D;
-    }
-
-    public void updateContainingBlockInfo()
-    {
-        super.updateContainingBlockInfo();
-    }
-
-    private boolean func_145977_a(int x, int y, int z)
-    {
-        if (this.worldObj == null)
+        if(worldObj == null)
+        {
+            return true;
+        }
+        if(worldObj.getTileEntity(xCoord, yCoord, zCoord) != this)
         {
             return false;
         }
-        else
-        {
-            Block block = this.worldObj.getBlock(x, y, z);
-            return block instanceof BlockChest && ((BlockChest)block).field_149956_a == this.func_145980_j();
-        }
+        return entityplayer.getDistanceSq((double)xCoord + 0.5D, (double)yCoord + 0.5D, (double)zCoord + 0.5D) <= 64D;
     }
 
-    public void updateEntity()
-    {
-        super.updateEntity();
-        ++this.ticksSinceSync;
-        float f;
-
-        if (!this.worldObj.isRemote && this.numPlayersUsing != 0 && (this.ticksSinceSync + this.xCoord + this.yCoord + this.zCoord) % 200 == 0)
-        {
-            this.numPlayersUsing = 0;
-            f = 5.0F;
-            List list = this.worldObj.getEntitiesWithinAABB(EntityPlayer.class, AxisAlignedBB.getBoundingBox((double)((float)this.xCoord - f), (double)((float)this.yCoord - f), (double)((float)this.zCoord - f), (double)((float)(this.xCoord + 1) + f), (double)((float)(this.yCoord + 1) + f), (double)((float)(this.zCoord + 1) + f)));
-            Iterator iterator = list.iterator();
-
-            while (iterator.hasNext())
-            {
-                EntityPlayer entityplayer = (EntityPlayer)iterator.next();
-
-                if (entityplayer.openContainer instanceof ContainerChest)
-                {
-                    IInventory iinventory = ((ContainerChest)entityplayer.openContainer).getLowerChestInventory();
-
-                    if (iinventory == this || iinventory instanceof InventoryLargeChest && ((InventoryLargeChest)iinventory).isPartOfLargeChest(this))
-                    {
-                        ++this.numPlayersUsing;
-                    }
-                }
-            }
-        }
-
-        this.prevLidAngle = this.lidAngle;
-        f = 0.1F;
-        double d2;
-
-        if (this.numPlayersUsing > 0 && this.lidAngle == 0.0F)
-        {
-            double d1 = (double)this.xCoord + 0.5D;
-            d2 = (double)this.zCoord + 0.5D;
-
-            this.worldObj.playSoundEffect(d1, (double)this.yCoord + 0.5D, d2, "random.chestopen", 0.5F, this.worldObj.rand.nextFloat() * 0.1F + 0.9F);
-        }
-
-        if (this.numPlayersUsing == 0 && this.lidAngle > 0.0F || this.numPlayersUsing > 0 && this.lidAngle < 1.0F)
-        {
-            float f1 = this.lidAngle;
-
-            if (this.numPlayersUsing > 0)
-            {
-                this.lidAngle += f;
-            }
-            else
-            {
-                this.lidAngle -= f;
-            }
-
-            if (this.lidAngle > 1.0F)
-            {
-                this.lidAngle = 1.0F;
-            }
-
-            float f2 = 0.5F;
-
-            if (this.lidAngle < f2 && f1 >= f2)
-            {
-                d2 = (double)this.xCoord + 0.5D;
-                double d0 = (double)this.zCoord + 0.5D;
-
-                this.worldObj.playSoundEffect(d2, (double)this.yCoord + 0.5D, d0, "random.chestclosed", 0.5F, this.worldObj.rand.nextFloat() * 0.1F + 0.9F);
-            }
-
-            if (this.lidAngle < 0.0F)
-            {
-                this.lidAngle = 0.0F;
-            }
-        }
-    }
-
-    public boolean receiveClientEvent(int p_145842_1_, int p_145842_2_)
-    {
-        if (p_145842_1_ == 1)
-        {
-            this.numPlayersUsing = p_145842_2_;
-            return true;
-        }
-        else
-        {
-            return super.receiveClientEvent(p_145842_1_, p_145842_2_);
-        }
-    }
-
+    @Override
     public void openInventory()
     {
-        if (this.numPlayersUsing < 0)
-        {
-            this.numPlayersUsing = 0;
-        }
-
-        ++this.numPlayersUsing;
-        this.worldObj.addBlockEvent(this.xCoord, this.yCoord, this.zCoord, this.getBlockType(), 1, this.numPlayersUsing);
-        this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord, this.zCoord, this.getBlockType());
-        this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord - 1, this.zCoord, this.getBlockType());
+        if(worldObj == null)
+            return;
+        numUsingPlayers++;
+        worldObj.addBlockEvent(xCoord, yCoord, zCoord, IronChest.ironChestBlock, 1, numUsingPlayers);
     }
 
+    @Override
     public void closeInventory()
     {
-        if (this.getBlockType() instanceof BlockChest)
-        {
-            --this.numPlayersUsing;
-            this.worldObj.addBlockEvent(this.xCoord, this.yCoord, this.zCoord, this.getBlockType(), 1, this.numPlayersUsing);
-            this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord, this.zCoord, this.getBlockType());
-            this.worldObj.notifyBlocksOfNeighborChange(this.xCoord, this.yCoord - 1, this.zCoord, this.getBlockType());
-        }
+        if(worldObj == null)
+            return;
+        numUsingPlayers--;
+        worldObj.addBlockEvent(xCoord, yCoord, zCoord, IronChest.ironChestBlock, 1, numUsingPlayers);
     }
 
-    public boolean isItemValidForSlot(int p_94041_1_, ItemStack p_94041_2_)
+    @Override
+    public boolean isItemValidForSlot(int slotIndex, ItemStack stack)
     {
         return true;
     }
 
-    public void invalidate()
+    @Override
+    public void readFromNBT(NBTTagCompound nbttagcompound)
     {
-        super.invalidate();
-        this.updateContainingBlockInfo();
+        super.readFromNBT(nbttagcompound);
+        NBTTagList nbttaglist = nbttagcompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+        chestContents = new ItemStack[getSizeInventory()];
+        for(int i = 0; i < nbttaglist.tagCount(); i++)
+        {
+            NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
+            int j = nbttagcompound1.getByte("Slot") & 0xff;
+            if(j >= 0 && j < chestContents.length)
+            {
+                chestContents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+            }
+        }
+        facing = nbttagcompound.getByte("facing");
+        sortTopStacks();
     }
 
-    public int func_145980_j()
+    @Override
+    public void writeToNBT(NBTTagCompound nbttagcompound)
     {
-        if (this.cachedChestType == -1)
+        super.writeToNBT(nbttagcompound);
+        NBTTagList nbttaglist = new NBTTagList();
+        for(int i = 0; i < chestContents.length; i++)
         {
-            if (this.worldObj == null || !(this.getBlockType() instanceof BlockChest))
+            if(chestContents[i] != null)
             {
-                return 0;
+                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+                nbttagcompound1.setByte("Slot", (byte)i);
+                chestContents[i].writeToNBT(nbttagcompound1);
+                nbttaglist.appendTag(nbttagcompound1);
             }
-
-            this.cachedChestType = ((BlockChest)this.getBlockType()).field_149956_a;
         }
 
-        return this.cachedChestType;
-    }
-    
-    public void setDirection(byte direction)
-    {
-        this.direction = direction;
-        this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
-    }
-    
-    public byte getDirection()
-    {
-        return this.direction;
+        nbttagcompound.setTag("Items", nbttaglist);
+        nbttagcompound.setByte("facing", (byte)facing);
     }
 }

@@ -1,33 +1,48 @@
 package fr.ftnt.mineswagg.common;
 
 import cpw.mods.fml.common.network.IGuiHandler;
-import fr.ftnt.mineswagg.client.GUISwaggiumChest;
+import cpw.mods.ironchest.ContainerIronChest;
+import cpw.mods.ironchest.IronChestType;
+import cpw.mods.ironchest.TileEntityIronChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 public class GuiHandlerSwaggium implements IGuiHandler
 {
-
-    @Override
-    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
+    public void registerRenderInformation()
     {
-        TileEntity tile = world.getTileEntity(x, y, z);
-        if (tile instanceof TileEntitySwaggiumChest)
-        {
-            return new ContainerSwaggiumChest((TileEntitySwaggiumChest)tile, player.inventory);
-        }
-        return null;
+
+    }
+
+    public void registerTileEntitySpecialRenderer(IronChestType typ)
+    {
+
     }
 
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
     {
-        TileEntity tile = world.getTileEntity(x, y, z);
-        if (tile instanceof TileEntitySwaggiumChest)
+        return null;
+    }
+
+    @Override
+    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int X, int Y, int Z)
+    {
+        TileEntity te = world.getTileEntity(X, Y, Z);
+        if (te != null && te instanceof TileEntitySwaggiumChest)
         {
-            return new GUISwaggiumChest((TileEntitySwaggiumChest)tile, player.inventory);
+            TileEntitySwaggiumChest icte = (TileEntitySwaggiumChest) te;
+            return new ContainerIronChest(player.inventory, icte, icte.getType(), 0, 0);
         }
+        else
+        {
+            return null;
+        }
+    }
+
+    public World getClientWorld()
+    {
         return null;
     }
 

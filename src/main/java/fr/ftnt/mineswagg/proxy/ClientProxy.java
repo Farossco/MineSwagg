@@ -1,12 +1,8 @@
 package fr.ftnt.mineswagg.proxy;
 
-import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import fr.ftnt.mineswagg.client.TileEntitySwaggiumChestRenderer;
-import fr.ftnt.mineswagg.client.TileEntitySwaggiumChestRendererInventory;
-import fr.ftnt.mineswagg.common.EntitySwagged;
 import fr.ftnt.mineswagg.common.RenderSwagged;
-import fr.ftnt.mineswagg.common.TileEntitySwaggiumChest;
+import fr.ftnt.mineswagg.common.entities.EntitySwagged;
 import net.minecraft.client.model.ModelBiped;
 
 public class ClientProxy extends CommonProxy
@@ -19,9 +15,9 @@ public class ClientProxy extends CommonProxy
         RenderingRegistry.registerEntityRenderingHandler(EntitySwagged.class, new RenderSwagged(new ModelBiped()));
         
         tesrRenderId = RenderingRegistry.getNextAvailableRenderId();
-        RenderingRegistry.registerBlockHandler(new TileEntitySwaggiumChestRendererInventory());
+        //RenderingRegistry.registerBlockHandler(new TileEntitySwaggiumChestRendererInventory());
         
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySwaggiumChest.class, new TileEntitySwaggiumChestRenderer());
+        //ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySwaggiumChest.class, new TileEntitySwaggiumChestRenderer());
     }
 
 }

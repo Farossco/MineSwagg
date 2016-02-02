@@ -1,4 +1,4 @@
-package fr.ftnt.mineswagg.common;
+package fr.ftnt.mineswagg.common.entities;
 
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.monster.EntityMob;
