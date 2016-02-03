@@ -25,13 +25,12 @@ String min = new File('version/min').getText('UTF-8')
 String rev = new File('version/rev').getText('UTF-8')
 
 def versionInfo = getGitVersion()
-version=maj+'.'+min+'.'+rev
 def versionnobuild=maj+'.'+min+'.'+rev
 
 if (project.hasProperty('buildNumber')) {
  version = versionnobuild + "." + project.buildNumber
 } else {
- version = versionnobuild + System.getenv().BUILD_NUMBER
+ version = versionnobuild + "." + System.getenv().BUILD_NUMBER
 }
 
 group= "fr.ftnt.mineswagg" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -83,7 +82,7 @@ jar {
 
 }
 
-println "FISHBUM ${jar.version}"
+println "v${jar.version}"
 
 // Add in a source jar for people, should they desire to download such a thing
 task sourceJar(type: Jar) {
@@ -101,11 +100,9 @@ task deobfJar(type: Jar) {
 
 curse {
 	displayName = 'MineSwagg v' + versionnobuild + ' build ' + System.getenv().BUILD_NUMBER
-
-	apiKey      = project.hasProperty('curseForgeApiKey') ? project.curseForgeApiKey : ''
+	apiKey      = new File('../curseKey').getText('UTF-8')
     projectId   = "241422"
     releaseType = "alpha"
-	
     changelog   = project.hasProperty('changelog') ? project.changelog : ''
 }
 
