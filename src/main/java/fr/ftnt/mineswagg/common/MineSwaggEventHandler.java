@@ -2,12 +2,14 @@ package fr.ftnt.mineswagg.common;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
+import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
-public class LivingEventHandler
+public class MineSwaggEventHandler
 {
     @SubscribeEvent
     public void onLivingHurt(LivingHurtEvent event)
@@ -38,5 +40,14 @@ public class LivingEventHandler
             event.distance = 0F;
         }
     }
+    
+    @SubscribeEvent
+    public void onEntityConstructing(EntityConstructing event)
+    {
+        if(event.entity instanceof EntityPlayer && MineSwaggExtendedEntity.get((EntityPlayer)event.entity) == null)
+            MineSwaggExtendedEntity.register((EntityPlayer)event.entity);
 
+        if(event.entity instanceof EntityPlayer && event.entity.getExtendedProperties(MineSwaggExtendedEntity.EXT_PROP_NAME) == null)
+            event.entity.registerExtendedProperties(MineSwaggExtendedEntity.EXT_PROP_NAME, new MineSwaggExtendedEntity((EntityPlayer)event.entity));
+    }
 }

@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class GuiHandlerSwaggium implements IGuiHandler
+public class GuiHandler implements IGuiHandler
 {
     public void registerRenderInformation()
     {

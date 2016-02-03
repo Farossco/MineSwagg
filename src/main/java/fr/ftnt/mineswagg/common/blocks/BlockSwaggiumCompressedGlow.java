@@ -1,10 +1,10 @@
-package fr.ftnt.mineswagg.common;
+package fr.ftnt.mineswagg.common.blocks;
 
 import java.util.Random;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumCompressed;
+import fr.ftnt.mineswagg.common.MineSwagg;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -40,7 +40,7 @@ public class BlockSwaggiumCompressedGlow extends BlockSwaggiumCompressed
             }
             else if (!this.lightedField && world.isBlockIndirectlyGettingPowered(x, y, z))
             {
-                world.setBlock(x, y, z, MineSwagg.blockSwaggiumLitCompressedGlow, 0, 2);
+                world.setBlock(x, y, z, MineSwagg.blockSwaggiumLitLamp, 0, 2);
             }
         }
     }
@@ -55,7 +55,7 @@ public class BlockSwaggiumCompressedGlow extends BlockSwaggiumCompressed
             }
             else if (!this.lightedField && world.isBlockIndirectlyGettingPowered(x, y, z))
             {
-                world.setBlock(x, y, z, MineSwagg.blockSwaggiumLitCompressedGlow, 0, 2);
+                world.setBlock(x, y, z, MineSwagg.blockSwaggiumLitLamp, 0, 2);
             }
         }
     }
@@ -64,24 +64,24 @@ public class BlockSwaggiumCompressedGlow extends BlockSwaggiumCompressed
     {
         if (!world.isRemote && this.lightedField && !world.isBlockIndirectlyGettingPowered(x, y, z))
         {
-            world.setBlock(x, y, z, MineSwagg.blockSwaggiumCompressedGlow, 0, 2);
+            world.setBlock(x, y, z, MineSwagg.blockSwaggiumLamp, 0, 2);
         }
     }
 
     @SideOnly(Side.CLIENT)
     public Item getItem(World world, int x, int y, int z)
     {
-        return Item.getItemFromBlock(MineSwagg.blockSwaggiumCompressedGlow);
+        return Item.getItemFromBlock(MineSwagg.blockSwaggiumLamp);
     }
 
     public Item getItemDropped(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
     {
-        return Item.getItemFromBlock(MineSwagg.blockSwaggiumCompressedGlow);
+        return Item.getItemFromBlock(MineSwagg.blockSwaggiumLamp);
     }
     
     protected ItemStack createStackedBlock(int p_149644_1_)
     {
-        return new ItemStack(MineSwagg.blockSwaggiumCompressedGlow);
+        return new ItemStack(MineSwagg.blockSwaggiumLamp);
     }
 }
 

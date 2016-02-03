@@ -11,8 +11,10 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.ironchest.ItemIronChest;
+import fr.ftnt.mineswagg.common.blocks.BlockSwaggTester;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumChest;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumCompressed;
+import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumCompressedGlow;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumDoor;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumFence;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumOre;
@@ -61,7 +63,7 @@ public class MineSwagg
     public static Item ItemSwaggiumAxe, ItemSwaggiumSword, ItemSwaggiumPickaxe, ItemSwaggiumShovel, ItemSwaggiumHoe; // Tools
 
     // Blocks declaration
-    public static Block blockSwaggiumOre, blockSwaggiumCompressed, BlockSwaggiumDoor, blockSwaggiumFence, blockSwaggiumCompressedGlow, blockSwaggiumLitCompressedGlow; // Basic Blocks
+    public static Block blockSwaggiumOre, blockSwaggiumCompressed, BlockSwaggiumDoor, blockSwaggiumFence, blockSwaggiumLamp, blockSwaggiumLitLamp, blockSwaggTester; // Basic Blocks
     public static Block blockTutoMetadata; // Tuto Blocks
     public static Block blockSwaggiumChest; // Iron Chest integration
 
@@ -111,11 +113,12 @@ public class MineSwagg
         blockSwaggiumCompressed = new BlockSwaggiumCompressed();
         BlockSwaggiumDoor = new BlockSwaggiumDoor();
         blockSwaggiumFence = new BlockSwaggiumFence();
-        blockSwaggiumCompressedGlow = new BlockSwaggiumCompressedGlow(false).setCreativeTab(CreativeTabs.tabRedstone).setBlockTextureName(MineSwagg.MODID + ":swaggium_lamp_off");
-        blockSwaggiumLitCompressedGlow = new BlockSwaggiumCompressedGlow(true).setCreativeTab(null).setBlockTextureName(MineSwagg.MODID + ":swaggium_lamp_on");
+        blockSwaggiumLamp = new BlockSwaggiumCompressedGlow(false).setCreativeTab(CreativeTabs.tabRedstone).setBlockTextureName(MineSwagg.MODID + ":swaggium_lamp_off");
+        blockSwaggiumLitLamp = new BlockSwaggiumCompressedGlow(true).setCreativeTab(null).setBlockTextureName(MineSwagg.MODID + ":swaggium_lamp_on");
+        blockSwaggTester = new BlockSwaggTester();
         // Tuto Blocks
         blockTutoMetadata = new BlockTutoMetadata();
-        // Iron Chest integration
+        
 
         // Registering
         GameRegistry.registerBlock(blockSwaggiumOre, "block_swaggium");
@@ -123,9 +126,11 @@ public class MineSwagg
         GameRegistry.registerBlock(BlockSwaggiumDoor, "block_swaggium_door");
         GameRegistry.registerBlock(blockSwaggiumFence, "block_swaggium_fence");
         GameRegistry.registerBlock(blockTutoMetadata, ItemBlockSwaggiumMetadata.class, "block_tuto_metadata");
-        GameRegistry.registerBlock(blockSwaggiumCompressedGlow, "block_swaggium_lamp");
-        GameRegistry.registerBlock(blockSwaggiumLitCompressedGlow, "block_lit_swaggium_lamp");
+        GameRegistry.registerBlock(blockSwaggiumLamp, "block_swaggium_lamp");
+        GameRegistry.registerBlock(blockSwaggiumLitLamp, "block_lit_swaggium_lamp");
+        GameRegistry.registerBlock(blockSwaggTester, "block_swagg_tester");
 
+        // Iron Chest integration
         if(Loader.isModLoaded("IronChest"))
         {
             blockSwaggiumChest = new BlockSwaggiumChest();
@@ -140,7 +145,7 @@ public class MineSwagg
     {
         // --------------------------- Entities ---------------------------
         addEntity(EntitySwagged.class, "swagged", 420, 0xd4192b, 0x522dbc);
-        MinecraftForge.EVENT_BUS.register(new LivingEventHandler());
+        MinecraftForge.EVENT_BUS.register(new MineSwaggEventHandler());
         proxy.registerRender();
 
         // --------------------------- TileEntities ---------------------------
@@ -150,7 +155,8 @@ public class MineSwagg
         // NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandlerSwaggium());
         registerRecipes();
 
-        /* I'm gonna get back on this soon
+        /*
+         * I'm gonna get back on this soon
          * if(Loader.isModLoaded("ironchest"))
          * {
          * blockSwaggiumChest = new BlockSwaggiumChest();
@@ -161,6 +167,8 @@ public class MineSwagg
 
     private void registerRecipes()
     {
+        GameRegistry.addShapelessRecipe(new ItemStack(blockSwaggiumOre), new Object[] {new ItemStack(itemSwaggiumIngot), new ItemStack(Blocks.stone)});
+
         GameRegistry.addRecipe(new ItemStack(itemSwaggiumHelmet), new Object[] {"III", "I I", 'I', itemSwaggiumIngot});
         GameRegistry.addRecipe(new ItemStack(itemSwaggiumChestplate), new Object[] {"I I", "III", "III", 'I', itemSwaggiumIngot});
         GameRegistry.addRecipe(new ItemStack(itemSwaggiumLeggings), new Object[] {"III", "I I", "I I", 'I', itemSwaggiumIngot});
@@ -171,9 +179,10 @@ public class MineSwagg
         GameRegistry.addRecipe(new ItemStack(ItemSwaggiumShovel), new Object[] {" I ", " S ", " S ", 'I', itemSwaggiumIngot, 'S', Items.stick});
         GameRegistry.addRecipe(new ItemStack(ItemSwaggiumHoe), new Object[] {"II ", " S ", " S ", 'I', itemSwaggiumIngot, 'S', Items.stick});
         GameRegistry.addRecipe(new ItemStack(itemSwaggiumDoor), new Object[] {"II", "II", "II", 'I', itemSwaggiumIngot});
-        GameRegistry.addShapelessRecipe(new ItemStack(blockSwaggiumOre), new Object[] {new ItemStack(itemSwaggiumIngot), new ItemStack(Blocks.stone)});
         GameRegistry.addRecipe(new ItemStack(blockSwaggiumCompressed), new Object[] {"III", "III", "III", 'I', itemSwaggiumIngot});
         GameRegistry.addRecipe(new ItemStack(blockSwaggiumFence), new Object[] {"III", "III", 'I', itemSwaggiumIngot});
+        GameRegistry.addRecipe(new ItemStack(blockSwaggiumLamp), new Object[] {"GRG", "RBR", "GRG", 'R', Items.redstone, 'B', blockSwaggiumCompressed, 'G', Items.glowstone_dust});
+
         GameRegistry.addSmelting(blockSwaggiumOre, new ItemStack(itemSwaggiumIngot), 0.0F);
     }
 
