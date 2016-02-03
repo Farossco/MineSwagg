@@ -18,6 +18,7 @@ buildscript {
 
 // Apply the forge plugin - this adds all the magic for automatically obfuscating, deobfuscating etc
 apply plugin: 'forge'
+apply plugin: 'curseforge'
 
 String maj = new File('version/maj').getText('UTF-8')
 String min = new File('version/min').getText('UTF-8')
@@ -25,11 +26,12 @@ String rev = new File('version/rev').getText('UTF-8')
 
 def versionInfo = getGitVersion()
 version=maj+'.'+min+'.'+rev
+def versionnobuild=maj+'.'+min+'.'+rev
 
 if (project.hasProperty('buildNumber')) {
- version += "." + project.buildNumber
+ version = versionnobuild + "." + project.buildNumber
 } else {
- version += ".NoBuildNumber"
+ version = versionnobuild + System.getenv().BUILD_NUMBER
 }
 
 group= "fr.ftnt.mineswagg" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -97,6 +99,16 @@ task deobfJar(type: Jar) {
     version = "${project.minecraft.version}-${project.version}"
 }
 
+curse {
+	displayName = 'MineSwagg v' + versionnobuild + ' build ' + System.getenv().BUILD_NUMBER
+
+	apiKey      = project.hasProperty('curseForgeApiKey') ? project.curseForgeApiKey : ''
+    projectId   = "241422"
+    releaseType = "alpha"
+	
+    changelog   = project.hasProperty('changelog') ? project.changelog : ''
+}
+
 // Tell the artifact system about our extra jars
 artifacts {
 	archives sourceJar, deobfJar
@@ -107,7 +119,7 @@ def getGitVersion()
 {
 	def out = [:]
 
-	String bn = "NoBuildNumber"
+	String bn = System.getenv().BUILD_NUMBER
 	if (project.hasProperty('buildNumber')) {
 	 bn = project.buildNumber
 	}
