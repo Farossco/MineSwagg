@@ -13,6 +13,7 @@ item.HorseArmorSwaggium.name=Swaggium Horse Armor (Unusable)
 item.ingotSwaggium.name=Swaggium Ingot
 
 tile.blockSwaggium.name=Swaggium Block
+tile.blockSwaggiumLamp.name=Swaggium Lamp
 tile.blockSwaggiumChest.name=Swaggium Chest
 tile.oreSwaggium.name=Swaggium Ore
 tile.doorSwaggium.name=Swaggium Door

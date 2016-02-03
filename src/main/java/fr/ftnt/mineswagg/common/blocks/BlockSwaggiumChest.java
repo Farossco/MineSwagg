@@ -1,14 +1,13 @@
-package fr.ftnt.mineswagg.common;
+package fr.ftnt.mineswagg.common.blocks;
 
 import java.util.List;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import cpw.mods.ironchest.BlockIronChest;
 import cpw.mods.ironchest.IronChest;
 import cpw.mods.ironchest.IronChestType;
 import cpw.mods.ironchest.TileEntityIronChest;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,11 +17,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class BlockSwaggiumChest extends BlockContainer
+public class BlockSwaggiumChest extends BlockIronChest
 {
     public BlockSwaggiumChest()
     {
-        super(Material.iron);
+        super();
         setBlockName("SwaggiumChest");
         setHardness(3.0F);
         setBlockBounds(0.0625F, 0F, 0.0625F, 0.9375F, 0.875F, 0.9375F);

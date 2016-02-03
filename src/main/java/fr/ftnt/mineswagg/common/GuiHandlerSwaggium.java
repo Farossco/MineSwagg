@@ -4,6 +4,7 @@ import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.ironchest.ContainerIronChest;
 import cpw.mods.ironchest.IronChestType;
 import cpw.mods.ironchest.TileEntityIronChest;
+import fr.ftnt.mineswagg.common.tileentities.TileEntitySwaggiumChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;

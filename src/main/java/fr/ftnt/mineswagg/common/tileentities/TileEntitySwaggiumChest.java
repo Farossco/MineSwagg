@@ -1,4 +1,4 @@
-package fr.ftnt.mineswagg.common;
+package fr.ftnt.mineswagg.common.tileentities;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -10,6 +10,7 @@ import cpw.mods.ironchest.IronChest;
 import cpw.mods.ironchest.ItemChestChanger;
 import cpw.mods.ironchest.PacketHandler;
 import cpw.mods.ironchest.TileEntityIronChest;
+import fr.ftnt.mineswagg.common.IronChestType;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;

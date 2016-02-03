@@ -7,7 +7,6 @@ import net.minecraft.block.material.MapColor;
 
 public class BlockSwaggiumCompressed extends BlockCompressed
 {
-
     public BlockSwaggiumCompressed()
     {
         super(MapColor.lapisColor);
@@ -17,5 +16,4 @@ public class BlockSwaggiumCompressed extends BlockCompressed
         this.setBlockName("blockSwaggium");
         this.setBlockTextureName(MineSwagg.MODID + ":swaggium_block");
     }
-
 }
