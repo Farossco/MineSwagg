@@ -82,8 +82,6 @@ jar {
 
 }
 
-println "v${jar.version}"
-
 // Add in a source jar for people, should they desire to download such a thing
 task sourceJar(type: Jar) {
 	from sourceSets.main.allSource
@@ -99,8 +97,8 @@ task deobfJar(type: Jar) {
 }
 
 curse {
-	displayName = 'MineSwagg v' + versionnobuild + ' build ' + System.getenv().BUILD_NUMBER
-	apiKey      = new File('../curseKey').getText('UTF-8')
+	displayName = 'MineSwagg v' + versionnobuild + ' buildNumber ' + project.hasProperty('buildNumber') ? project.build : System.getenv().BUILD_NUMBER
+	apiKey      = project.hasProperty('curseApiKey') ? project.curseApiKey : System.getenv().CURSEAPIKEY
     projectId   = "241422"
     releaseType = "alpha"
     changelog   = project.hasProperty('changelog') ? project.changelog : ''
