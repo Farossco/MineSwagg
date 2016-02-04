@@ -97,7 +97,7 @@ task deobfJar(type: Jar) {
 }
 
 curse {
-	displayName = 'MineSwagg v' + versionnobuild + ' buildNumber ' + project.hasProperty('buildNumber') ? project.build : System.getenv().BUILD_NUMBER
+	displayName = 'MineSwagg v' + versionnobuild + ' build ' + (project.hasProperty('buildNumber') ? project.build : System.getenv().BUILD_NUMBER)
 	apiKey      = project.hasProperty('curseApiKey') ? project.curseApiKey : System.getenv().CURSEAPIKEY
     projectId   = "241422"
     releaseType = "alpha"
