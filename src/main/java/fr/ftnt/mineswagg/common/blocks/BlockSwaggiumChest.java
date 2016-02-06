@@ -8,7 +8,6 @@ import cpw.mods.ironchest.BlockIronChest;
 import cpw.mods.ironchest.IronChest;
 import cpw.mods.ironchest.IronChestType;
 import cpw.mods.ironchest.TileEntityIronChest;
-import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -27,31 +26,31 @@ public class BlockSwaggiumChest extends BlockIronChest
         setBlockBounds(0.0625F, 0F, 0.0625F, 0.9375F, 0.875F, 0.9375F);
         setCreativeTab(CreativeTabs.tabDecorations);
     }
-    
+
     @Override
     public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer player, int i1, float f1, float f2, float f3)
     {
         TileEntity te = world.getTileEntity(i, j, k);
 
-        if (te == null || !(te instanceof TileEntityIronChest))
+        if(te == null || !(te instanceof TileEntityIronChest))
         {
             return true;
         }
 
-        if (world.isSideSolid(i, j + 1, k, ForgeDirection.DOWN))
+        if(world.isSideSolid(i, j + 1, k, ForgeDirection.DOWN))
         {
             return true;
         }
 
-        if (world.isRemote)
+        if(world.isRemote)
         {
             return true;
         }
 
-        player.openGui(IronChest.instance, ((TileEntityIronChest) te).getType().ordinal(), world, i, j, k);
+        player.openGui(IronChest.instance, ((TileEntityIronChest)te).getType().ordinal(), world, i, j, k);
         return true;
     }
-    
+
     @Override
     @SideOnly(Side.CLIENT)
     public void getSubBlocks(Item item, CreativeTabs tab, List list)

@@ -2,7 +2,6 @@ package fr.ftnt.mineswagg.client;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.entity.Entity;
 
 public class ModelSwaggiumChest extends ModelBase
 {

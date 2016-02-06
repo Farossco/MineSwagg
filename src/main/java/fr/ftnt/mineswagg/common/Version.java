@@ -2,7 +2,8 @@ package fr.ftnt.mineswagg.common;
 
 import java.util.Properties;
 
-public class Version {
+public class Version
+{
     private static String major;
     private static String minor;
     private static String rev;
@@ -11,7 +12,7 @@ public class Version {
 
     static void init(Properties properties)
     {
-        if (properties != null)
+        if(properties != null)
         {
             major = properties.getProperty("MineSwagg.build.major.number");
             minor = properties.getProperty("MineSwagg.build.minor.number");

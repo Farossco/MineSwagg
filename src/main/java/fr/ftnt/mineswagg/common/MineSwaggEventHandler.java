@@ -24,7 +24,6 @@ public class MineSwaggEventHandler
             if(event.source.getEntity() != null && event.source.getEntity() instanceof EntityCreeper)
             {
                 event.setCanceled(true);
-
             }
         }
     }
@@ -36,18 +35,18 @@ public class MineSwaggEventHandler
         if(boots != null && boots.getItem() == MineSwagg.itemSwaggiumBoots)
         {
             boots.damageItem(MathHelper.floor_float(event.distance), event.entityLiving);
-            //event.entityLiving.worldObj.newExplosion(event.entityLiving, event.entityLiving.posX, event.entityLiving.posY, event.entityLiving.posZ, 2, true, true);
+            // event.entityLiving.worldObj.newExplosion(event.entityLiving, event.entityLiving.posX, event.entityLiving.posY, event.entityLiving.posZ, 2, true, true);
             event.distance = 0F;
         }
     }
-    
+
     @SubscribeEvent
     public void onEntityConstructing(EntityConstructing event)
     {
-        if(event.entity instanceof EntityPlayer && MineSwaggExtendedEntity.get((EntityPlayer)event.entity) == null)
-            MineSwaggExtendedEntity.register((EntityPlayer)event.entity);
+        if(event.entity instanceof EntityPlayer && ExtendedEntity.get((EntityPlayer)event.entity) == null)
+            ExtendedEntity.register((EntityPlayer)event.entity);
 
-        if(event.entity instanceof EntityPlayer && event.entity.getExtendedProperties(MineSwaggExtendedEntity.EXT_PROP_NAME) == null)
-            event.entity.registerExtendedProperties(MineSwaggExtendedEntity.EXT_PROP_NAME, new MineSwaggExtendedEntity((EntityPlayer)event.entity));
+        if(event.entity instanceof EntityPlayer && event.entity.getExtendedProperties(ExtendedEntity.EXT_PROP_NAME) == null)
+            event.entity.registerExtendedProperties(ExtendedEntity.EXT_PROP_NAME, new ExtendedEntity((EntityPlayer)event.entity));
     }
 }

@@ -8,13 +8,17 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
 import cpw.mods.ironchest.ItemIronChest;
+import fr.ftnt.mineswagg.client.SwaggBarHandler;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggTester;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumChest;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumCompressed;
-import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumCompressedGlow;
+import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumLamp;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumDoor;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumFence;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumOre;
@@ -71,9 +75,15 @@ public class MineSwagg
     public static ArmorMaterial armorSwaggium = EnumHelper.addArmorMaterial("armorSwaggium", 15, new int[] {2, 6, 5, 2}, 30);
     public static ToolMaterial toolSwaggium = EnumHelper.addToolMaterial("toolSwaggium", 2, 60, 20.0F, 4.0F, 30);
 
+    public static SimpleNetworkWrapper network;
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        network = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
+        network.registerMessage(PacketSwaggAmount.Handler.class, PacketSwaggAmount.class, 0, Side.SERVER);
+        network.registerMessage(PacketSwaggAmountAnswer.Handler.class, PacketSwaggAmountAnswer.class, 1, Side.CLIENT);
+
         Version.init(event.getVersionProperties());
         event.getModMetadata().version = Version.fullVersionString();
 
@@ -113,12 +123,11 @@ public class MineSwagg
         blockSwaggiumCompressed = new BlockSwaggiumCompressed();
         BlockSwaggiumDoor = new BlockSwaggiumDoor();
         blockSwaggiumFence = new BlockSwaggiumFence();
-        blockSwaggiumLamp = new BlockSwaggiumCompressedGlow(false).setCreativeTab(CreativeTabs.tabRedstone).setBlockTextureName(MineSwagg.MODID + ":swaggium_lamp_off");
-        blockSwaggiumLitLamp = new BlockSwaggiumCompressedGlow(true).setCreativeTab(null).setBlockTextureName(MineSwagg.MODID + ":swaggium_lamp_on");
+        blockSwaggiumLamp = new BlockSwaggiumLamp(false).setCreativeTab(CreativeTabs.tabRedstone).setBlockTextureName(MineSwagg.MODID + ":swaggium_lamp_off");
+        blockSwaggiumLitLamp = new BlockSwaggiumLamp(true).setCreativeTab(null).setBlockTextureName(MineSwagg.MODID + ":swaggium_lamp_on");
         blockSwaggTester = new BlockSwaggTester();
         // Tuto Blocks
         blockTutoMetadata = new BlockTutoMetadata();
-        
 
         // Registering
         GameRegistry.registerBlock(blockSwaggiumOre, "block_swaggium");
@@ -191,6 +200,7 @@ public class MineSwagg
     {
 
         proxy.registerRender();
+        MinecraftForge.EVENT_BUS.register(new SwaggBarHandler());
 
     }
 

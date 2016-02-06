@@ -14,7 +14,7 @@ public class ItemSwaggiumDoor extends ItemDoor
 
     private Material doorMaterial;
     private static final String __OBFID = "CL_00000020";
-    
+
     public ItemSwaggiumDoor()
     {
         super(Material.iron);
@@ -24,7 +24,7 @@ public class ItemSwaggiumDoor extends ItemDoor
 
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int p_77648_4_, int p_77648_5_, int p_77648_6_, int p_77648_7_, float p_77648_8_, float p_77648_9_, float p_77648_10_)
     {
-        if (p_77648_7_ != 1)
+        if(p_77648_7_ != 1)
         {
             return false;
         }
@@ -35,9 +35,9 @@ public class ItemSwaggiumDoor extends ItemDoor
 
             block = MineSwagg.BlockSwaggiumDoor;
 
-            if (player.canPlayerEdit(p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_, stack) && player.canPlayerEdit(p_77648_4_, p_77648_5_ + 1, p_77648_6_, p_77648_7_, stack))
+            if(player.canPlayerEdit(p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_, stack) && player.canPlayerEdit(p_77648_4_, p_77648_5_ + 1, p_77648_6_, p_77648_7_, stack))
             {
-                if (!block.canPlaceBlockAt(world, p_77648_4_, p_77648_5_, p_77648_6_))
+                if(!block.canPlaceBlockAt(world, p_77648_4_, p_77648_5_, p_77648_6_))
                 {
                     return false;
                 }

@@ -20,17 +20,17 @@ public class ItemBlockSwaggiumMetadata extends ItemBlock
     {
         return this.field_150939_a.getIcon(2, metadata);
     }
-    
+
     public int getMetadata(int metadata)
     {
         return metadata;
     }
-    
+
     public String getUnlocalizedName(ItemStack stack)
     {
         int metadata = stack.getItemDamage();
 
-        if (metadata < 0 || metadata >= BlockTutoMetadata.textureName.length)
+        if(metadata < 0 || metadata >= BlockTutoMetadata.textureName.length)
         {
             metadata = 0;
         }

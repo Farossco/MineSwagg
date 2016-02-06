@@ -13,7 +13,7 @@ public class ItemSwaggiumShovel extends ItemSpade
         this.setUnlocalizedName("shovelSwaggium");
         this.setTextureName(MineSwagg.MODID + ":swaggium_shovel");
     }
-    
+
     public boolean getIsRepairable(ItemStack input, ItemStack repair)
     {
         if(repair.getItem() == MineSwagg.itemSwaggiumIngot)

@@ -6,25 +6,22 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import fr.ftnt.mineswagg.common.MineSwagg;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.MapColor;
-import net.minecraft.block.material.Material;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class BlockSwaggiumCompressedGlow extends BlockSwaggiumCompressed
+public class BlockSwaggiumLamp extends BlockSwaggiumCompressed
 {
 
     private final boolean lightedField;
-    
-    public BlockSwaggiumCompressedGlow(boolean lighted)
+
+    public BlockSwaggiumLamp(boolean lighted)
     {
         super();
         this.setBlockName("blockSwaggiumLamp");
         this.lightedField = lighted;
 
-        if (lighted)
+        if(lighted)
         {
             this.setLightLevel(1.0F);
         }
@@ -32,13 +29,13 @@ public class BlockSwaggiumCompressedGlow extends BlockSwaggiumCompressed
 
     public void onBlockAdded(World world, int x, int y, int z)
     {
-        if (!world.isRemote)
+        if(!world.isRemote)
         {
-            if (this.lightedField && !world.isBlockIndirectlyGettingPowered(x, y, z))
+            if(this.lightedField && !world.isBlockIndirectlyGettingPowered(x, y, z))
             {
                 world.scheduleBlockUpdate(x, y, z, this, 4);
             }
-            else if (!this.lightedField && world.isBlockIndirectlyGettingPowered(x, y, z))
+            else if(!this.lightedField && world.isBlockIndirectlyGettingPowered(x, y, z))
             {
                 world.setBlock(x, y, z, MineSwagg.blockSwaggiumLitLamp, 0, 2);
             }
@@ -47,13 +44,13 @@ public class BlockSwaggiumCompressedGlow extends BlockSwaggiumCompressed
 
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block)
     {
-        if (!world.isRemote)
+        if(!world.isRemote)
         {
-            if (this.lightedField && !world.isBlockIndirectlyGettingPowered(x, y, z))
+            if(this.lightedField && !world.isBlockIndirectlyGettingPowered(x, y, z))
             {
                 world.scheduleBlockUpdate(x, y, z, this, 4);
             }
-            else if (!this.lightedField && world.isBlockIndirectlyGettingPowered(x, y, z))
+            else if(!this.lightedField && world.isBlockIndirectlyGettingPowered(x, y, z))
             {
                 world.setBlock(x, y, z, MineSwagg.blockSwaggiumLitLamp, 0, 2);
             }
@@ -62,7 +59,7 @@ public class BlockSwaggiumCompressedGlow extends BlockSwaggiumCompressed
 
     public void updateTick(World world, int x, int y, int z, Random random)
     {
-        if (!world.isRemote && this.lightedField && !world.isBlockIndirectlyGettingPowered(x, y, z))
+        if(!world.isRemote && this.lightedField && !world.isBlockIndirectlyGettingPowered(x, y, z))
         {
             world.setBlock(x, y, z, MineSwagg.blockSwaggiumLamp, 0, 2);
         }
@@ -78,10 +75,9 @@ public class BlockSwaggiumCompressedGlow extends BlockSwaggiumCompressed
     {
         return Item.getItemFromBlock(MineSwagg.blockSwaggiumLamp);
     }
-    
+
     protected ItemStack createStackedBlock(int p_149644_1_)
     {
         return new ItemStack(MineSwagg.blockSwaggiumLamp);
     }
 }
-

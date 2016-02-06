@@ -16,7 +16,7 @@ public class ItemSwaggiumPickaxe extends ItemPickaxe
         this.setUnlocalizedName("pickaxeSwaggium");
         this.setTextureName(MineSwagg.MODID + ":swaggium_pickaxe");
     }
-    
+
     public boolean getIsRepairable(ItemStack input, ItemStack repair)
     {
         if(repair.getItem() == MineSwagg.itemSwaggiumIngot)
@@ -25,10 +25,10 @@ public class ItemSwaggiumPickaxe extends ItemPickaxe
         }
         return false;
     }
-    
+
     public boolean onBlockDestroyed(ItemStack stack, World world, Block block, int x, int y, int z, EntityLivingBase entity)
     {
-        if ((double)block.getBlockHardness(world, x, y, z) != 0.0D)
+        if((double)block.getBlockHardness(world, x, y, z) != 0.0D)
         {
             stack.damageItem(1, entity);
         }
