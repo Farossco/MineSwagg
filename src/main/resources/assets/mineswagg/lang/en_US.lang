@@ -24,6 +24,8 @@ tile.metadataTuto.block3.name=3
 tile.metadataTuto.block4.name=4
 tile.swaggTester.name=Swagg Tester
 
+container.swaggGenerator=Swagg Generator
+
 entity.swagged.name=[ERROR] Too many Swagg !
 
 sword.mode.message.0=Burn Players

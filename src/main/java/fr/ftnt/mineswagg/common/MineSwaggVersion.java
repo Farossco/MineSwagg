@@ -2,7 +2,7 @@ package fr.ftnt.mineswagg.common;
 
 import java.util.Properties;
 
-public class Version
+public class MineSwaggVersion
 {
     private static String major;
     private static String minor;

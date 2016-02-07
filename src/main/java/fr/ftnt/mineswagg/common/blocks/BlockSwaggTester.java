@@ -1,7 +1,7 @@
 package fr.ftnt.mineswagg.common.blocks;
 
-import fr.ftnt.mineswagg.common.ExtendedEntity;
 import fr.ftnt.mineswagg.common.MineSwagg;
+import fr.ftnt.mineswagg.common.MineSwaggExtendedEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -27,7 +27,7 @@ public class BlockSwaggTester extends Block
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float posX, float posY, float posZ)
     {
-        ExtendedEntity props = ExtendedEntity.get(player);
+        MineSwaggExtendedEntity props = MineSwaggExtendedEntity.get(player);
 
         if(side == 1)
             props.addSwagg(5);

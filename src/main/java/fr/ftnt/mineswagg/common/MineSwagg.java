@@ -1,6 +1,5 @@
 package fr.ftnt.mineswagg.common;
 
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -13,17 +12,17 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.ironchest.ItemIronChest;
 import fr.ftnt.mineswagg.client.SwaggBarHandler;
+import fr.ftnt.mineswagg.common.blocks.BlockSwaggGenerator;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggTester;
-import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumChest;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumCompressed;
-import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumLamp;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumDoor;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumFence;
+import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumLamp;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumOre;
 import fr.ftnt.mineswagg.common.blocks.BlockTutoMetadata;
 import fr.ftnt.mineswagg.common.entities.EntitySwagged;
+import fr.ftnt.mineswagg.common.guiHandlers.GuiHandlerSwaggGenerator;
 import fr.ftnt.mineswagg.common.items.ItemSwaggiumArmor;
 import fr.ftnt.mineswagg.common.items.ItemSwaggiumAxe;
 import fr.ftnt.mineswagg.common.items.ItemSwaggiumDoor;
@@ -33,6 +32,9 @@ import fr.ftnt.mineswagg.common.items.ItemSwaggiumShovel;
 import fr.ftnt.mineswagg.common.items.ItemSwaggiumSword;
 import fr.ftnt.mineswagg.common.items.itemSwaggiumIngot;
 import fr.ftnt.mineswagg.common.items.itemBlocks.ItemBlockSwaggiumMetadata;
+import fr.ftnt.mineswagg.common.packets.PacketSwaggAmountAnswer;
+import fr.ftnt.mineswagg.common.packets.PacketSwaggAmountRequest;
+import fr.ftnt.mineswagg.common.tileentities.TileEntitySwaggGenerator;
 import fr.ftnt.mineswagg.proxy.CommonProxy;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -63,11 +65,12 @@ public class MineSwagg
     // Items declaration
     public static Item itemSwaggiumIngot; // Ingot
     public static Item itemSwaggiumHelmet, itemSwaggiumChestplate, itemSwaggiumLeggings, itemSwaggiumBoots; // Armor
-    public static Item itemSwaggiumDoor /* , itemArmorHorseSwaggium */; // Miscellaneous
+    public static Item itemSwaggiumDoor; // Miscellaneous
     public static Item ItemSwaggiumAxe, ItemSwaggiumSword, ItemSwaggiumPickaxe, ItemSwaggiumShovel, ItemSwaggiumHoe; // Tools
 
     // Blocks declaration
-    public static Block blockSwaggiumOre, blockSwaggiumCompressed, BlockSwaggiumDoor, blockSwaggiumFence, blockSwaggiumLamp, blockSwaggiumLitLamp, blockSwaggTester; // Basic Blocks
+    public static Block blockSwaggiumOre, blockSwaggiumCompressed, BlockSwaggiumDoor, blockSwaggiumFence, blockSwaggiumLamp, blockSwaggiumLitLamp, blockSwaggTester, blockSwaggGenerator; // Basic
+                                                                                                                                                                                          // Blocks
     public static Block blockTutoMetadata; // Tuto Blocks
     public static Block blockSwaggiumChest; // Iron Chest integration
 
@@ -81,11 +84,11 @@ public class MineSwagg
     public void preInit(FMLPreInitializationEvent event)
     {
         network = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
-        network.registerMessage(PacketSwaggAmount.Handler.class, PacketSwaggAmount.class, 0, Side.SERVER);
+        network.registerMessage(PacketSwaggAmountRequest.Handler.class, PacketSwaggAmountRequest.class, 0, Side.SERVER);
         network.registerMessage(PacketSwaggAmountAnswer.Handler.class, PacketSwaggAmountAnswer.class, 1, Side.CLIENT);
 
-        Version.init(event.getVersionProperties());
-        event.getModMetadata().version = Version.fullVersionString();
+        MineSwaggVersion.init(event.getVersionProperties());
+        event.getModMetadata().version = MineSwaggVersion.fullVersionString();
 
         // --------------------------- Items ---------------------------
         // Basic Items
@@ -126,6 +129,7 @@ public class MineSwagg
         blockSwaggiumLamp = new BlockSwaggiumLamp(false).setCreativeTab(CreativeTabs.tabRedstone).setBlockTextureName(MineSwagg.MODID + ":swaggium_lamp_off");
         blockSwaggiumLitLamp = new BlockSwaggiumLamp(true).setCreativeTab(null).setBlockTextureName(MineSwagg.MODID + ":swaggium_lamp_on");
         blockSwaggTester = new BlockSwaggTester();
+        blockSwaggGenerator = new BlockSwaggGenerator();
         // Tuto Blocks
         blockTutoMetadata = new BlockTutoMetadata();
 
@@ -138,13 +142,7 @@ public class MineSwagg
         GameRegistry.registerBlock(blockSwaggiumLamp, "block_swaggium_lamp");
         GameRegistry.registerBlock(blockSwaggiumLitLamp, "block_lit_swaggium_lamp");
         GameRegistry.registerBlock(blockSwaggTester, "block_swagg_tester");
-
-        // Iron Chest integration
-        if(Loader.isModLoaded("IronChest"))
-        {
-            blockSwaggiumChest = new BlockSwaggiumChest();
-            GameRegistry.registerBlock(blockSwaggiumChest, ItemIronChest.class, "block_swaggium_chest");
-        }
+        GameRegistry.registerBlock(blockSwaggGenerator, "block_swagg_generator");
 
         OreDictionary.registerOre("ingotSwaggium", itemSwaggiumIngot);
     }
@@ -159,19 +157,11 @@ public class MineSwagg
 
         // --------------------------- TileEntities ---------------------------
         // GameRegistry.registerTileEntity(fr.ftnt.mineswagg.common.tileentities.TileEntitySwaggiumChest.class, MODID + ":SwaggiumChest");
+        GameRegistry.registerTileEntity(TileEntitySwaggGenerator.class, MODID + ":SwaggGenerator");
 
         // --------------------------- GUI ---------------------------
-        // NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandlerSwaggium());
+        NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandlerSwaggGenerator());
         registerRecipes();
-
-        /*
-         * I'm gonna get back on this soon
-         * if(Loader.isModLoaded("ironchest"))
-         * {
-         * blockSwaggiumChest = new BlockSwaggiumChest();
-         * GameRegistry.registerBlock(blockSwaggiumChest, "block_swaggium_chest");
-         * }
-         */
     }
 
     private void registerRecipes()

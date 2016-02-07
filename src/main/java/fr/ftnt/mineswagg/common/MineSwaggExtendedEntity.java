@@ -7,26 +7,26 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.MinecraftForge;
 
-public class ExtendedEntity implements IExtendedEntityProperties
+public class MineSwaggExtendedEntity implements IExtendedEntityProperties
 {
     public final static String EXT_PROP_NAME = "MineSwaggExtendedPlayer";
     private final EntityPlayer player;
     private int swaggAmount, swaggLevel;
     private final int maxSwagg = 182;
 
-    public ExtendedEntity(EntityPlayer player)
+    public MineSwaggExtendedEntity(EntityPlayer player)
     {
         this.player = player;
     }
 
     public static final void register(EntityPlayer player)
     {
-        player.registerExtendedProperties(ExtendedEntity.EXT_PROP_NAME, new ExtendedEntity(player));
+        player.registerExtendedProperties(MineSwaggExtendedEntity.EXT_PROP_NAME, new MineSwaggExtendedEntity(player));
     }
 
-    public static final ExtendedEntity get(EntityPlayer player)
+    public static final MineSwaggExtendedEntity get(EntityPlayer player)
     {
-        return (ExtendedEntity)player.getExtendedProperties(EXT_PROP_NAME);
+        return (MineSwaggExtendedEntity)player.getExtendedProperties(EXT_PROP_NAME);
     }
 
     @Override

@@ -43,10 +43,10 @@ public class MineSwaggEventHandler
     @SubscribeEvent
     public void onEntityConstructing(EntityConstructing event)
     {
-        if(event.entity instanceof EntityPlayer && ExtendedEntity.get((EntityPlayer)event.entity) == null)
-            ExtendedEntity.register((EntityPlayer)event.entity);
+        if(event.entity instanceof EntityPlayer && MineSwaggExtendedEntity.get((EntityPlayer)event.entity) == null)
+            MineSwaggExtendedEntity.register((EntityPlayer)event.entity);
 
-        if(event.entity instanceof EntityPlayer && event.entity.getExtendedProperties(ExtendedEntity.EXT_PROP_NAME) == null)
-            event.entity.registerExtendedProperties(ExtendedEntity.EXT_PROP_NAME, new ExtendedEntity((EntityPlayer)event.entity));
+        if(event.entity instanceof EntityPlayer && event.entity.getExtendedProperties(MineSwaggExtendedEntity.EXT_PROP_NAME) == null)
+            event.entity.registerExtendedProperties(MineSwaggExtendedEntity.EXT_PROP_NAME, new MineSwaggExtendedEntity((EntityPlayer)event.entity));
     }
 }

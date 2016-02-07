@@ -1,4 +1,4 @@
-package fr.ftnt.mineswagg.common;
+package fr.ftnt.mineswagg.client;
 
 import fr.ftnt.mineswagg.common.entities.EntitySwagged;
 import net.minecraft.client.model.ModelBiped;

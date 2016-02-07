@@ -1,7 +1,7 @@
 package fr.ftnt.mineswagg.proxy;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import fr.ftnt.mineswagg.common.RenderSwagged;
+import fr.ftnt.mineswagg.client.RenderSwagged;
 import fr.ftnt.mineswagg.common.entities.EntitySwagged;
 import net.minecraft.client.model.ModelBiped;
 

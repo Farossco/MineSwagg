@@ -4,9 +4,9 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import fr.ftnt.mineswagg.common.ExtendedEntity;
 import fr.ftnt.mineswagg.common.MineSwagg;
-import fr.ftnt.mineswagg.common.PacketSwaggAmount;
+import fr.ftnt.mineswagg.common.MineSwaggExtendedEntity;
+import fr.ftnt.mineswagg.common.packets.PacketSwaggAmountRequest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.FontRenderer;
@@ -19,6 +19,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
 public class SwaggBarHandler
 {
+    public static int swaggAmount, swaggLevel;
     static EntityPlayer player;
     FontRenderer fontrenderer;
 
@@ -31,14 +32,14 @@ public class SwaggBarHandler
         fontrenderer = minecraft.fontRenderer;
         ScaledResolution resolution = new ScaledResolution(minecraft, minecraft.displayWidth, minecraft.displayHeight);
         GuiIngame gui = minecraft.ingameGUI;
-        ExtendedEntity props = ExtendedEntity.get(player);
+        MineSwaggExtendedEntity props = MineSwaggExtendedEntity.get(player);
         World world = minecraft.theWorld;
 
-        // Getting swagg amount and level from server
-        MineSwagg.network.sendToServer(new PacketSwaggAmount());
+        // -- Getting swagg amount and level from server --
+        MineSwagg.network.sendToServer(new PacketSwaggAmountRequest());
         EntityClientPlayerMP player = minecraft.thePlayer;
-        props.setSwaggAmount(SwaggAmounts.swaggAmount);
-        props.setSwaggLevel(SwaggAmounts.swaggLevel);
+        props.setSwaggAmount(this.swaggAmount);
+        props.setSwaggLevel(this.swaggLevel);
 
         int height = resolution.getScaledHeight() - 500;
         int width = resolution.getScaledWidth() / 2;
@@ -48,7 +49,7 @@ public class SwaggBarHandler
         String swaggAmountString = "Swagg: " + swaggAmount;
         String swaggLevelString = "Swagg level: " + swaggLevel;
 
-        if(swaggAmount != 0 || swaggLevel != 0)
+        if(!(swaggAmount == 0 && swaggLevel == 0))
         {
             fontrenderer.drawString(swaggAmountString, 1, 1, 0xffffffff);
             fontrenderer.drawString(swaggLevelString, 1, 10, 0xffffffff);

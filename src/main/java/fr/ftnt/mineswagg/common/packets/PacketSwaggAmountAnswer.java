@@ -1,9 +1,9 @@
-package fr.ftnt.mineswagg.common;
+package fr.ftnt.mineswagg.common.packets;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import fr.ftnt.mineswagg.client.SwaggAmounts;
+import fr.ftnt.mineswagg.client.SwaggBarHandler;
 import io.netty.buffer.ByteBuf;
 
 public class PacketSwaggAmountAnswer implements IMessage
@@ -40,8 +40,8 @@ public class PacketSwaggAmountAnswer implements IMessage
         @Override
         public IMessage onMessage(PacketSwaggAmountAnswer message, MessageContext ctx)
         {
-            SwaggAmounts.swaggAmount = PacketSwaggAmountAnswer.swaggAmount;
-            SwaggAmounts.swaggLevel = PacketSwaggAmountAnswer.swaggLevel;
+            SwaggBarHandler.swaggAmount = PacketSwaggAmountAnswer.swaggAmount;
+            SwaggBarHandler.swaggLevel = PacketSwaggAmountAnswer.swaggLevel;
 
             return null;
         }
