@@ -52,7 +52,7 @@ public class MineSwaggExtendedEntity implements IExtendedEntityProperties
         MinecraftForge.EVENT_BUS.register(new MineSwaggEventHandler());
     }
 
-    public boolean consumeSwagg(int amount)
+    public boolean consumeSwaggAmount(int amount)
     {
         boolean sufficient = amount <= this.swaggAmount + swaggLevel * maxSwagg;
 
@@ -64,12 +64,21 @@ public class MineSwaggExtendedEntity implements IExtendedEntityProperties
         return sufficient;
     }
 
-    public void addSwagg(int amount)
+    public boolean consumeSwaggLevel(int amount)
+    {
+        return consumeSwaggAmount(maxSwagg * amount);
+    }
+
+    public void addSwaggAmount(int amount)
     {
         this.swaggAmount += amount;
-        // System.out.println("Adding " + amount + " swagg");
-        // System.out.println("Swagg: " + this.swaggAmount);
         testLevelUp();
+    }
+
+    public void addSwaggLevel(int amount)
+    {
+        this.swaggLevel += amount;
+        playSound();
     }
 
     private void testLevelUp()
@@ -87,18 +96,10 @@ public class MineSwaggExtendedEntity implements IExtendedEntityProperties
         }
     }
 
-    public void addSwaggLevel(int amount)
-    {
-        this.swaggLevel += amount;
-        playSound();
-        // System.out.println("Adding " + amount + " swagg level");
-        // System.out.println("Swagg level: " + this.swaggLevel);
-    }
-
     private void playSound()
     {
         World world = player.worldObj;
-        world.playSoundAtEntity(this.player, "random.levelup", 1, 1);
+        world.playSoundAtEntity(this.player, "random.levelup", 1, 2);
     }
 
     public int getSwaggAmount()
@@ -116,14 +117,25 @@ public class MineSwaggExtendedEntity implements IExtendedEntityProperties
         return maxSwagg;
     }
 
-    public void setSwaggAmount(int swaggAmount)
+    public boolean setSwaggAmount(int swaggAmount)
     {
-        this.swaggAmount = swaggAmount;
+
+        if(swaggAmount >= 0)
+        {
+            this.swaggAmount = swaggAmount;
+            return true;
+        }
         testLevelUp();
+        return false;
     }
 
-    public void setSwaggLevel(int swaggLevel)
+    public boolean setSwaggLevel(int swaggLevel)
     {
-        this.swaggLevel = swaggLevel;
+        if(swaggLevel >= 0)
+        {
+            this.swaggLevel = swaggLevel;
+            return true;
+        }
+        return false;
     }
 }

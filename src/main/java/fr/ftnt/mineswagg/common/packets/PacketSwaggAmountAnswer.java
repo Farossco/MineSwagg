@@ -40,6 +40,7 @@ public class PacketSwaggAmountAnswer implements IMessage
         @Override
         public IMessage onMessage(PacketSwaggAmountAnswer message, MessageContext ctx)
         {
+            // System.out.println("time:" + stockedSwagg);
             SwaggBarHandler.swaggAmount = PacketSwaggAmountAnswer.swaggAmount;
             SwaggBarHandler.swaggLevel = PacketSwaggAmountAnswer.swaggLevel;
 

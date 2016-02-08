@@ -21,7 +21,6 @@ public class BlockSwaggTester extends Block
         this.setStepSound(Block.soundTypePiston);
         this.setBlockName("swaggTester");
         this.setBlockTextureName(MineSwagg.MODID + ":swaggium_block");
-        // this.setBlockTextureName(MineSwagg.MODID + ":swagg_tester");
     }
 
     @Override
@@ -30,14 +29,14 @@ public class BlockSwaggTester extends Block
         MineSwaggExtendedEntity props = MineSwaggExtendedEntity.get(player);
 
         if(side == 1)
-            props.addSwagg(5);
+            props.addSwaggLevel(1);
 
         if(side == 0)
-            props.consumeSwagg(5);
+            props.consumeSwaggLevel(1);
 
-        System.out.println((!world.isRemote ? "Server: " : "Client: ") + "Swagg: " + props.getSwaggAmount());
-        System.out.println((!world.isRemote ? "Server: " : "Client: ") + "Swagg total: " + (props.getSwaggAmount() + props.getSwaggLevel() * props.getMaxSwagg()));
-        System.out.println((!world.isRemote ? "Server: " : "Client: ") + "Swagg level: " + props.getSwaggLevel() + "\n");
+        // System.out.println((!world.isRemote ? "Server: " : "Client: ") + "Swagg: " + props.getSwaggAmount());
+        // System.out.println((!world.isRemote ? "Server: " : "Client: ") + "Swagg total: " + (props.getSwaggAmount() + props.getSwaggLevel() * props.getMaxSwagg()));
+        // System.out.println((!world.isRemote ? "Server: " : "Client: ") + "Swagg level: " + props.getSwaggLevel() + "\n");
 
         // System.out.println("Side: " + side);
 

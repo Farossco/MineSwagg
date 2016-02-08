@@ -1,23 +1,23 @@
-package fr.ftnt.mineswagg.common.guiHandlers;
+package fr.ftnt.mineswagg.client.guiHandlers;
 
 import cpw.mods.fml.common.network.IGuiHandler;
-import fr.ftnt.mineswagg.client.GuiSwaggGenerator;
-import fr.ftnt.mineswagg.common.containers.ContainerSwaggGenerator;
-import fr.ftnt.mineswagg.common.tileentities.TileEntitySwaggGenerator;
+import fr.ftnt.mineswagg.client.GuiSwaggiumGenerator;
+import fr.ftnt.mineswagg.common.containers.ContainerSwaggiumGenerator;
+import fr.ftnt.mineswagg.common.tileentities.TileEntitySwaggiumGenerator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class GuiHandlerSwaggGenerator implements IGuiHandler
+public class GuiHandlerSwaggiumGenerator implements IGuiHandler
 {
 
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
     {
         TileEntity tile = world.getTileEntity(x, y, z);
-        if(tile instanceof TileEntitySwaggGenerator)
+        if(tile instanceof TileEntitySwaggiumGenerator)
         {
-            return new ContainerSwaggGenerator((TileEntitySwaggGenerator)tile, player.inventory);
+            return new ContainerSwaggiumGenerator((TileEntitySwaggiumGenerator)tile, player.inventory);
         }
         return null;
     }
@@ -26,9 +26,9 @@ public class GuiHandlerSwaggGenerator implements IGuiHandler
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
     {
         TileEntity tile = world.getTileEntity(x, y, z);
-        if(tile instanceof TileEntitySwaggGenerator)
+        if(tile instanceof TileEntitySwaggiumGenerator)
         {
-            return new GuiSwaggGenerator((TileEntitySwaggGenerator)tile, player.inventory);
+            return new GuiSwaggiumGenerator((TileEntitySwaggiumGenerator)tile, player.inventory);
         }
         return null;
     }

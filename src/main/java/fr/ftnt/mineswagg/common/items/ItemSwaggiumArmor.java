@@ -12,7 +12,6 @@ import net.minecraft.world.World;
 
 public class ItemSwaggiumArmor extends ItemArmor
 {
-
     public ItemSwaggiumArmor(int type)
     {
         super(MineSwagg.armorSwaggium, 0, type);
@@ -38,16 +37,15 @@ public class ItemSwaggiumArmor extends ItemArmor
                 this.setUnlocalizedName("unknownToolSwaggium");
                 break;
         }
-
     }
 
     public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type)
-    { // --- Must be modified ---
-        if(slot == 2) // Leggings texture (layer_2)
+    {
+        if(slot == 2)
         {
             return MineSwagg.MODID + ":/textures/models/armor/swaggium_layer_2.png";
         }
-        return MineSwagg.MODID + ":/textures/models/armor/swaggium_layer_1.png"; // Other texture (Layer_1)
+        return MineSwagg.MODID + ":/textures/models/armor/swaggium_layer_1.png";
     }
 
     public void onArmorTick(World world, EntityPlayer player, ItemStack stack)
@@ -65,5 +63,4 @@ public class ItemSwaggiumArmor extends ItemArmor
         }
         return false;
     }
-
 }

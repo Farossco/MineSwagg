@@ -13,16 +13,16 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import fr.ftnt.mineswagg.client.SwaggBarHandler;
-import fr.ftnt.mineswagg.common.blocks.BlockSwaggGenerator;
+import fr.ftnt.mineswagg.client.guiHandlers.GuiHandlerSwaggiumGenerator;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggTester;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumCompressed;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumDoor;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumFence;
+import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumGenerator;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumLamp;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumOre;
 import fr.ftnt.mineswagg.common.blocks.BlockTutoMetadata;
 import fr.ftnt.mineswagg.common.entities.EntitySwagged;
-import fr.ftnt.mineswagg.common.guiHandlers.GuiHandlerSwaggGenerator;
 import fr.ftnt.mineswagg.common.items.ItemSwaggiumArmor;
 import fr.ftnt.mineswagg.common.items.ItemSwaggiumAxe;
 import fr.ftnt.mineswagg.common.items.ItemSwaggiumDoor;
@@ -34,7 +34,9 @@ import fr.ftnt.mineswagg.common.items.itemSwaggiumIngot;
 import fr.ftnt.mineswagg.common.items.itemBlocks.ItemBlockSwaggiumMetadata;
 import fr.ftnt.mineswagg.common.packets.PacketSwaggAmountAnswer;
 import fr.ftnt.mineswagg.common.packets.PacketSwaggAmountRequest;
-import fr.ftnt.mineswagg.common.tileentities.TileEntitySwaggGenerator;
+import fr.ftnt.mineswagg.common.packets.PacketSwaggGeneratorAnswer;
+import fr.ftnt.mineswagg.common.packets.PacketSwaggGeneratorRequest;
+import fr.ftnt.mineswagg.common.tileentities.TileEntitySwaggiumGenerator;
 import fr.ftnt.mineswagg.proxy.CommonProxy;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -48,11 +50,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 @Mod(modid = MineSwagg.MODID, name = MineSwagg.NAME)
 public class MineSwagg
 {
-
     public static final String MODID = "MineSwagg";
     public static final String NAME = "MineSwagg";
 
@@ -69,8 +71,8 @@ public class MineSwagg
     public static Item ItemSwaggiumAxe, ItemSwaggiumSword, ItemSwaggiumPickaxe, ItemSwaggiumShovel, ItemSwaggiumHoe; // Tools
 
     // Blocks declaration
-    public static Block blockSwaggiumOre, blockSwaggiumCompressed, BlockSwaggiumDoor, blockSwaggiumFence, blockSwaggiumLamp, blockSwaggiumLitLamp, blockSwaggTester, blockSwaggGenerator; // Basic
-                                                                                                                                                                                          // Blocks
+    public static Block blockSwaggiumOre, blockSwaggiumCompressed, BlockSwaggiumDoor, blockSwaggiumFence, blockSwaggiumLamp, blockSwaggiumLitLamp, blockSwaggTester, blockSwaggiumGenerator; // Basic
+                                                                                                                                                                                             // Blocks
     public static Block blockTutoMetadata; // Tuto Blocks
     public static Block blockSwaggiumChest; // Iron Chest integration
 
@@ -86,6 +88,8 @@ public class MineSwagg
         network = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
         network.registerMessage(PacketSwaggAmountRequest.Handler.class, PacketSwaggAmountRequest.class, 0, Side.SERVER);
         network.registerMessage(PacketSwaggAmountAnswer.Handler.class, PacketSwaggAmountAnswer.class, 1, Side.CLIENT);
+        network.registerMessage(PacketSwaggGeneratorRequest.Handler.class, PacketSwaggGeneratorRequest.class, 2, Side.SERVER);
+        network.registerMessage(PacketSwaggGeneratorAnswer.Handler.class, PacketSwaggGeneratorAnswer.class, 3, Side.CLIENT);
 
         MineSwaggVersion.init(event.getVersionProperties());
         event.getModMetadata().version = MineSwaggVersion.fullVersionString();
@@ -129,7 +133,7 @@ public class MineSwagg
         blockSwaggiumLamp = new BlockSwaggiumLamp(false).setCreativeTab(CreativeTabs.tabRedstone).setBlockTextureName(MineSwagg.MODID + ":swaggium_lamp_off");
         blockSwaggiumLitLamp = new BlockSwaggiumLamp(true).setCreativeTab(null).setBlockTextureName(MineSwagg.MODID + ":swaggium_lamp_on");
         blockSwaggTester = new BlockSwaggTester();
-        blockSwaggGenerator = new BlockSwaggGenerator();
+        blockSwaggiumGenerator = new BlockSwaggiumGenerator();
         // Tuto Blocks
         blockTutoMetadata = new BlockTutoMetadata();
 
@@ -140,9 +144,9 @@ public class MineSwagg
         GameRegistry.registerBlock(blockSwaggiumFence, "block_swaggium_fence");
         GameRegistry.registerBlock(blockTutoMetadata, ItemBlockSwaggiumMetadata.class, "block_tuto_metadata");
         GameRegistry.registerBlock(blockSwaggiumLamp, "block_swaggium_lamp");
-        GameRegistry.registerBlock(blockSwaggiumLitLamp, "block_lit_swaggium_lamp");
+        GameRegistry.registerBlock(blockSwaggiumLitLamp, "block_swaggium_lit_lamp");
         GameRegistry.registerBlock(blockSwaggTester, "block_swagg_tester");
-        GameRegistry.registerBlock(blockSwaggGenerator, "block_swagg_generator");
+        GameRegistry.registerBlock(blockSwaggiumGenerator, "block_swaggium_generator");
 
         OreDictionary.registerOre("ingotSwaggium", itemSwaggiumIngot);
     }
@@ -157,10 +161,10 @@ public class MineSwagg
 
         // --------------------------- TileEntities ---------------------------
         // GameRegistry.registerTileEntity(fr.ftnt.mineswagg.common.tileentities.TileEntitySwaggiumChest.class, MODID + ":SwaggiumChest");
-        GameRegistry.registerTileEntity(TileEntitySwaggGenerator.class, MODID + ":SwaggGenerator");
+        GameRegistry.registerTileEntity(TileEntitySwaggiumGenerator.class, MODID + ":SwaggGenerator");
 
         // --------------------------- GUI ---------------------------
-        NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandlerSwaggGenerator());
+        NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandlerSwaggiumGenerator());
         registerRecipes();
     }
 
@@ -168,19 +172,21 @@ public class MineSwagg
     {
         GameRegistry.addShapelessRecipe(new ItemStack(blockSwaggiumOre), new Object[] {new ItemStack(itemSwaggiumIngot), new ItemStack(Blocks.stone)});
 
-        GameRegistry.addRecipe(new ItemStack(itemSwaggiumHelmet), new Object[] {"III", "I I", 'I', itemSwaggiumIngot});
-        GameRegistry.addRecipe(new ItemStack(itemSwaggiumChestplate), new Object[] {"I I", "III", "III", 'I', itemSwaggiumIngot});
-        GameRegistry.addRecipe(new ItemStack(itemSwaggiumLeggings), new Object[] {"III", "I I", "I I", 'I', itemSwaggiumIngot});
-        GameRegistry.addRecipe(new ItemStack(itemSwaggiumBoots), new Object[] {"I I", "I I", 'I', itemSwaggiumIngot});
-        GameRegistry.addRecipe(new ItemStack(ItemSwaggiumAxe), new Object[] {"II ", "IS ", " S ", 'I', itemSwaggiumIngot, 'S', Items.stick});
-        GameRegistry.addRecipe(new ItemStack(ItemSwaggiumSword), new Object[] {" I ", " I ", " S ", 'I', itemSwaggiumIngot, 'S', Items.stick});
-        GameRegistry.addRecipe(new ItemStack(ItemSwaggiumPickaxe), new Object[] {"III", " S ", " S ", 'I', itemSwaggiumIngot, 'S', Items.stick});
-        GameRegistry.addRecipe(new ItemStack(ItemSwaggiumShovel), new Object[] {" I ", " S ", " S ", 'I', itemSwaggiumIngot, 'S', Items.stick});
-        GameRegistry.addRecipe(new ItemStack(ItemSwaggiumHoe), new Object[] {"II ", " S ", " S ", 'I', itemSwaggiumIngot, 'S', Items.stick});
-        GameRegistry.addRecipe(new ItemStack(itemSwaggiumDoor), new Object[] {"II", "II", "II", 'I', itemSwaggiumIngot});
-        GameRegistry.addRecipe(new ItemStack(blockSwaggiumCompressed), new Object[] {"III", "III", "III", 'I', itemSwaggiumIngot});
-        GameRegistry.addRecipe(new ItemStack(blockSwaggiumFence), new Object[] {"III", "III", 'I', itemSwaggiumIngot});
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(itemSwaggiumHelmet), new Object[] {"III", "I I", 'I', "ingotSwaggium"}));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(itemSwaggiumChestplate), new Object[] {"I I", "III", "III", 'I', "ingotSwaggium"}));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(itemSwaggiumLeggings), new Object[] {"III", "I I", "I I", 'I', "ingotSwaggium"}));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(itemSwaggiumBoots), new Object[] {"I I", "I I", 'I', "ingotSwaggium"}));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ItemSwaggiumAxe), new Object[] {"II ", "IS ", " S ", 'I', "ingotSwaggium", 'S', Items.stick}));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ItemSwaggiumSword), new Object[] {" I ", " I ", " S ", 'I', "ingotSwaggium", 'S', Items.stick}));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ItemSwaggiumPickaxe), new Object[] {"III", " S ", " S ", 'I', "ingotSwaggium", 'S', Items.stick}));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ItemSwaggiumShovel), new Object[] {" I ", " S ", " S ", 'I', "ingotSwaggium", 'S', Items.stick}));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ItemSwaggiumHoe), new Object[] {"II ", " S ", " S ", 'I', "ingotSwaggium", 'S', Items.stick}));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(itemSwaggiumDoor), new Object[] {"II", "II", "II", 'I', "ingotSwaggium"}));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockSwaggiumCompressed), new Object[] {"III", "III", "III", 'I', "ingotSwaggium"}));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockSwaggiumFence), new Object[] {"III", "III", 'I', "ingotSwaggium"}));
+
         GameRegistry.addRecipe(new ItemStack(blockSwaggiumLamp), new Object[] {"GRG", "RBR", "GRG", 'R', Items.redstone, 'B', blockSwaggiumCompressed, 'G', Items.glowstone_dust});
+        GameRegistry.addRecipe(new ItemStack(blockSwaggiumGenerator), new Object[] {"GDG", "INI", "OEO", 'G', Item.getItemFromBlock(Blocks.gold_block), 'D', Item.getItemFromBlock(Blocks.diamond_block), 'I', Item.getItemFromBlock(Blocks.iron_block), 'N', Items.nether_star, 'O', Item.getItemFromBlock(Blocks.obsidian), 'E', Items.emerald});
 
         GameRegistry.addSmelting(blockSwaggiumOre, new ItemStack(itemSwaggiumIngot), 0.0F);
     }
@@ -188,10 +194,8 @@ public class MineSwagg
     @EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
-
         proxy.registerRender();
         MinecraftForge.EVENT_BUS.register(new SwaggBarHandler());
-
     }
 
     public void addEntity(Class<? extends Entity> entityClass, String name, int id, int backgroungEggColor, int foregroundEggColor)

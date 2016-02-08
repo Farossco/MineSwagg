@@ -11,10 +11,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
 
-public class TileEntitySwaggGenerator extends TileEntity implements IInventory
+public class TileEntitySwaggiumGenerator extends TileEntity implements IInventory
 {
     private ItemStack outputStack;
-    private int stockedSwagg, passedTime, remainingTime;
+    private int stockedSwagg, remainingTime;
     private String customName;
 
     @Override
@@ -27,6 +27,7 @@ public class TileEntitySwaggGenerator extends TileEntity implements IInventory
 
         this.outputStack = ItemStack.loadItemStackFromNBT(compound1);
         this.stockedSwagg = compound.getShort("stockedSwagg");
+        System.out.println(compound.getShort("stockedSwagg"));
         this.remainingTime = compound.getShort("remainingTime");
 
         if(compound.hasKey("CustomName", Constants.NBT.TAG_COMPOUND))
@@ -59,10 +60,10 @@ public class TileEntitySwaggGenerator extends TileEntity implements IInventory
     }
 
     @SideOnly(Side.CLIENT)
-    public int getPassedTimeScaled(int size)
+    public int getRemainingTimeScaled(int size)
     {
-        // System.out.println("Remaining: " + remainingTime);
-        return this.remainingTime / 200 * size;
+        // System.out.println("Remaining: " + remainingTime * size / 182);
+        return this.remainingTime * size / 182;
     }
 
     @Override
@@ -192,7 +193,7 @@ public class TileEntitySwaggGenerator extends TileEntity implements IInventory
             {
                 if(this.stockedSwagg > 0 && remainingTime == 0)
                 {
-                    this.remainingTime = 200;
+                    this.remainingTime = 182;
                     this.stockedSwagg--;
                 }
                 else if(remainingTime == 1)
@@ -211,11 +212,37 @@ public class TileEntitySwaggGenerator extends TileEntity implements IInventory
                 {
                     this.remainingTime--;
                 }
-                else
-                {
-                    this.stockedSwagg = 1;
-                }
             }
         }
+    }
+
+    public void addStockedSwagg(int amount)
+    {
+        this.stockedSwagg += amount;
+    }
+
+    public int getStockedSwagg()
+    {
+        return stockedSwagg;
+    }
+
+    public void setStockedSwagg(int stockedSwagg)
+    {
+        this.stockedSwagg = stockedSwagg;
+    }
+
+    public int getRemainingTime()
+    {
+        return remainingTime;
+    }
+
+    public void setRemainingTime(int remainingTime)
+    {
+        this.remainingTime = remainingTime;
+    }
+
+    public boolean isGenerating()
+    {
+        return remainingTime > 0;
     }
 }

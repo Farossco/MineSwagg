@@ -1,10 +1,11 @@
 package fr.ftnt.mineswagg.common.blocks;
 
 import fr.ftnt.mineswagg.common.MineSwagg;
-import fr.ftnt.mineswagg.common.tileentities.TileEntitySwaggGenerator;
+import fr.ftnt.mineswagg.common.tileentities.TileEntitySwaggiumGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,11 +15,17 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockSwaggGenerator extends BlockContainer
+public class BlockSwaggiumGenerator extends BlockContainer
 {
-    public BlockSwaggGenerator()
+    public BlockSwaggiumGenerator()
     {
         super(Material.iron);
+        this.setCreativeTab(CreativeTabs.tabBlock);
+        this.setHardness(3.0F);
+        this.setResistance(5.0F);
+        this.setStepSound(Block.soundTypePiston);
+        this.setBlockName("swaggiumGenerator");
+        this.setBlockTextureName(MineSwagg.MODID + ":swaggium_generator");
     }
 
     @Override
@@ -30,17 +37,15 @@ public class BlockSwaggGenerator extends BlockContainer
     @Override
     public TileEntity createNewTileEntity(World world, int metadata)
     {
-        return new TileEntitySwaggGenerator();
+        return new TileEntitySwaggiumGenerator();
     }
 
     public void breakBlock(World world, int x, int y, int z, Block block, int metadata)
     {
         TileEntity tileentity = world.getTileEntity(x, y, z);
-
         if(tileentity instanceof IInventory)
         {
             IInventory inventory = (IInventory)tileentity;
-
             ItemStack itemstack = inventory.getStackInSlot(0);
 
             if(itemstack != null)
@@ -78,11 +83,11 @@ public class BlockSwaggGenerator extends BlockContainer
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack)
     {
         TileEntity tile = world.getTileEntity(x, y, z);
-        if(tile instanceof TileEntitySwaggGenerator)
+        if(tile instanceof TileEntitySwaggiumGenerator)
         {
             if(stack.hasDisplayName())
             {
-                ((TileEntitySwaggGenerator)tile).setCustomName(stack.getDisplayName());
+                ((TileEntitySwaggiumGenerator)tile).setCustomName(stack.getDisplayName());
             }
         }
     }
@@ -95,7 +100,7 @@ public class BlockSwaggGenerator extends BlockContainer
         }
         else
         {
-            TileEntitySwaggGenerator tileEntity = (TileEntitySwaggGenerator)world.getTileEntity(x, y, z);
+            TileEntitySwaggiumGenerator tileEntity = (TileEntitySwaggiumGenerator)world.getTileEntity(x, y, z);
 
             if(tileEntity != null)
             {

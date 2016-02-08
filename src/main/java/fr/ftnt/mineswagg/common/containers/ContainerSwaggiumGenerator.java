@@ -1,25 +1,25 @@
 package fr.ftnt.mineswagg.common.containers;
 
-import fr.ftnt.mineswagg.common.tileentities.TileEntitySwaggGenerator;
+import fr.ftnt.mineswagg.common.tileentities.TileEntitySwaggiumGenerator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-public class ContainerSwaggGenerator extends Container
+public class ContainerSwaggiumGenerator extends Container
 {
-    private final TileEntitySwaggGenerator tile;
+    private final TileEntitySwaggiumGenerator tile;
 
-    public ContainerSwaggGenerator(TileEntitySwaggGenerator tile, InventoryPlayer inventory)
+    public ContainerSwaggiumGenerator(TileEntitySwaggiumGenerator tile, InventoryPlayer inventory)
     {
         this.tile = tile;
-        this.addSlotToContainer(new Slot(tile, 2, 116, 35)
+        this.addSlotToContainer(new Slot(tile, 0, 116, 35)
         {
             @Override
             public boolean isItemValid(ItemStack stack)
             {
-                return false;
+                return true;
             }
         });
 
@@ -50,8 +50,14 @@ public class ContainerSwaggGenerator extends Container
         this.tile.closeInventory();
     }
 
+    @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex)
     {
         return null;
+    }
+
+    public TileEntitySwaggiumGenerator getTile()
+    {
+        return tile;
     }
 }

@@ -21,7 +21,7 @@ public class SwaggBarHandler
 {
     public static int swaggAmount, swaggLevel;
     static EntityPlayer player;
-    FontRenderer fontrenderer;
+    FontRenderer fontRenderer;
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent(priority = EventPriority.NORMAL)
@@ -29,7 +29,7 @@ public class SwaggBarHandler
     {
         Minecraft minecraft = Minecraft.getMinecraft();
         player = minecraft.thePlayer;
-        fontrenderer = minecraft.fontRenderer;
+        fontRenderer = minecraft.fontRenderer;
         ScaledResolution resolution = new ScaledResolution(minecraft, minecraft.displayWidth, minecraft.displayHeight);
         GuiIngame gui = minecraft.ingameGUI;
         MineSwaggExtendedEntity props = MineSwaggExtendedEntity.get(player);
@@ -47,21 +47,20 @@ public class SwaggBarHandler
         int swaggLevel = props.getSwaggLevel();
         int maxSwagg = props.getMaxSwagg();
         String swaggAmountString = "Swagg: " + swaggAmount;
-        String swaggLevelString = "Swagg level: " + swaggLevel;
+        String swaggLevelString = "" + swaggLevel;
 
         if(!(swaggAmount == 0 && swaggLevel == 0))
         {
-            fontrenderer.drawString(swaggAmountString, 1, 1, 0xffffffff);
-            fontrenderer.drawString(swaggLevelString, 1, 10, 0xffffffff);
-
             if(!this.player.capabilities.isCreativeMode)
             {
+                fontRenderer.drawString(swaggLevelString, width - this.fontRenderer.getStringWidth(swaggLevelString) / 2, height + 446, 0x80ff20);
+                fontRenderer.drawString("", width - this.fontRenderer.getStringWidth(swaggLevelString) / 2, height + 446, 0xFFFFFF);
                 minecraft.renderEngine.bindTexture(new ResourceLocation("textures/gui/icons.png"));
                 gui.drawTexturedModalRect(width - 91, height + 452, 0, 74, maxSwagg, 5);
 
                 minecraft.renderEngine.bindTexture(new ResourceLocation(MineSwagg.MODID + ":textures/gui/icons.png"));
                 gui.drawTexturedModalRect(width - 91, height + 452, 0, 0, swaggAmount % maxSwagg, 5);
-                //
+
                 minecraft.renderEngine.bindTexture(new ResourceLocation("textures/gui/icons.png"));
             }
         }
