@@ -30,6 +30,10 @@ container.playerSwaggLevel=Your Swagg
 
 entity.swagged.name=[ERROR] Too many Swagg !
 
-sword.mode.message.0=Burn Players
-sword.mode.message.1=Burn mobs
-sword.mode.message.2=Burn animals
+commands.swagg.success=Given %s swagg to %s
+commands.swagg.success.levels=Given %s swagg levels to %s
+commands.swagg.success.levels.singular=Given %s swagg level to %s
+commands.swagg.success.negative=Taken %s swagg from %s
+commands.swagg.success.negative.levels=Taken %s swagg levels from %s
+commands.swagg.success.negative.levels.singular=Taken %s swagg level from %s
+commands.swagg.usage=/swagg <amount> [player] OR /swagg <amount>L [player]

@@ -29,20 +29,36 @@ public class BlockSwaggTester extends Block
         MineSwaggExtendedEntity props = MineSwaggExtendedEntity.get(player);
 
         if(side == 1)
-            props.addSwaggLevel(1);
+        {
+            if(player.isSneaking())
+            {
+                props.addSwaggLevel(10);
+            }
+            else
+            {
+                props.addSwaggLevel(1);
+            }
+
+        }
 
         if(side == 0)
-            props.consumeSwaggLevel(1);
+        {
+            if(player.isSneaking())
+            {
+                props.consumeSwaggLevel(10);
+            }
+            else
+            {
+                props.consumeSwaggLevel(1);
+
+            }
+        }
 
         // System.out.println((!world.isRemote ? "Server: " : "Client: ") + "Swagg: " + props.getSwaggAmount());
         // System.out.println((!world.isRemote ? "Server: " : "Client: ") + "Swagg total: " + (props.getSwaggAmount() + props.getSwaggLevel() * props.getMaxSwagg()));
         // System.out.println((!world.isRemote ? "Server: " : "Client: ") + "Swagg level: " + props.getSwaggLevel() + "\n");
 
         // System.out.println("Side: " + side);
-
-        this.swaggAmount = props.getSwaggAmount();
-        this.swaggLevel = props.getSwaggLevel();
-        this.maxSwagg = props.getMaxSwagg();
 
         return true;
     }

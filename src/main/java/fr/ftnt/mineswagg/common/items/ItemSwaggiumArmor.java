@@ -1,17 +1,17 @@
 package fr.ftnt.mineswagg.common.items;
 
 import fr.ftnt.mineswagg.common.MineSwagg;
+import fr.ftnt.mineswagg.common.MineSwaggExtendedEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 public class ItemSwaggiumArmor extends ItemArmor
 {
+    private int swaggIncreaser = 0;
+
     public ItemSwaggiumArmor(int type)
     {
         super(MineSwagg.armorSwaggium, 0, type);
@@ -48,11 +48,16 @@ public class ItemSwaggiumArmor extends ItemArmor
         return MineSwagg.MODID + ":/textures/models/armor/swaggium_layer_1.png";
     }
 
+    @Override
     public void onArmorTick(World world, EntityPlayer player, ItemStack stack)
     {
-        if(stack.getItem() == MineSwagg.itemSwaggiumHelmet && (world.getBlockLightValue(MathHelper.floor_double(player.posX), MathHelper.floor_double(player.posY), MathHelper.floor_double(player.posZ)) < 7))
-            player.addPotionEffect(new PotionEffect(Potion.nightVision.id, 240));
-        player.addPotionEffect(new PotionEffect(Potion.resistance.id, 10, 2));
+        this.swaggIncreaser += 1;
+        MineSwaggExtendedEntity props = MineSwaggExtendedEntity.get(player);
+        if(this.swaggIncreaser >= 1000000 / ((stack.isItemEqual(new ItemStack(MineSwagg.itemSwaggiumHelmet))) ? 2000 : (stack.isItemEqual(new ItemStack(MineSwagg.itemSwaggiumChestplate))) ? 6000 : (stack.isItemEqual(new ItemStack(MineSwagg.itemSwaggiumLeggings))) ? 3000 : (stack.isItemEqual(new ItemStack(MineSwagg.itemSwaggiumBoots))) ? 1000 : 1) && !world.isRemote)
+        {
+            props.addSwaggAmount(1);
+            this.swaggIncreaser = 0;
+        }
     }
 
     public boolean getIsRepairable(ItemStack input, ItemStack repair)

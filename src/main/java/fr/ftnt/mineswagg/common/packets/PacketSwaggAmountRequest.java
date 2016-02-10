@@ -10,16 +10,20 @@ import net.minecraft.entity.player.EntityPlayerMP;
 public class PacketSwaggAmountRequest implements IMessage
 {
     public static int swaggAmount, swaggLevel;
-    public static boolean updateSwaggAmount = false, updateSwaggLevel = false;
+    public static boolean updateSwaggAmount = false, updateSwaggLevel = false, add = false;
 
     public PacketSwaggAmountRequest()
     {
-        updateSwaggAmount = false;
-        updateSwaggLevel = false;
+        this.updateSwaggAmount = false;
+        this.updateSwaggLevel = false;
+        this.add = false;
     }
 
-    // true -> swaggAmount / false -> swaggLevel
-    public PacketSwaggAmountRequest(boolean choice, int swaggAmountLevel)
+    /*
+     * choice: true -> swaggAmount / false -> swaggLevel
+     * add: false -> set value / true -> add amount to value
+     */
+    public PacketSwaggAmountRequest(boolean choice, int swaggAmountLevel, boolean add)
     {
         if(choice)
         {
@@ -31,6 +35,8 @@ public class PacketSwaggAmountRequest implements IMessage
         }
         this.updateSwaggAmount = choice;
         this.updateSwaggLevel = !choice;
+        this.add = add;
+
     }
 
     public PacketSwaggAmountRequest(int swaggAmount, int swaggLevel)
@@ -47,6 +53,7 @@ public class PacketSwaggAmountRequest implements IMessage
         this.swaggLevel = buf.readInt();
         this.updateSwaggAmount = buf.readBoolean();
         this.updateSwaggLevel = buf.readBoolean();
+        this.add = buf.readBoolean();
     }
 
     @Override
@@ -56,6 +63,7 @@ public class PacketSwaggAmountRequest implements IMessage
         buf.writeInt(this.swaggLevel);
         buf.writeBoolean(this.updateSwaggAmount);
         buf.writeBoolean(this.updateSwaggLevel);
+        buf.writeBoolean(this.add);
     }
 
     public static class Handler implements IMessageHandler<PacketSwaggAmountRequest, IMessage>
@@ -69,14 +77,26 @@ public class PacketSwaggAmountRequest implements IMessage
             int swaggLevel = props.getSwaggLevel();
             if(updateSwaggAmount)
             {
-                props.setSwaggAmount(PacketSwaggAmountRequest.swaggAmount);
-
+                if(add)
+                {
+                    props.addSwaggAmount(PacketSwaggAmountRequest.swaggAmount);
+                }
+                else
+                {
+                    props.setSwaggAmount(PacketSwaggAmountRequest.swaggAmount);
+                }
             }
             if(updateSwaggLevel)
             {
-                props.setSwaggLevel(PacketSwaggAmountRequest.swaggLevel);
+                if(add)
+                {
+                    props.addSwaggLevel(PacketSwaggAmountRequest.swaggLevel);
+                }
+                else
+                {
+                    props.setSwaggLevel(PacketSwaggAmountRequest.swaggLevel);
+                }
             }
-
             return new PacketSwaggAmountAnswer(swaggAmount, swaggLevel);
         }
     }

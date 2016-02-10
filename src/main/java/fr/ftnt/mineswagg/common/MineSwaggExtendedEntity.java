@@ -78,16 +78,19 @@ public class MineSwaggExtendedEntity implements IExtendedEntityProperties
     public void addSwaggLevel(int amount)
     {
         this.swaggLevel += amount;
-        playSound();
+        if(amount > 0)
+            playSound();
     }
 
     private void testLevelUp()
     {
+        int amount = 0;
         while(swaggAmount >= maxSwagg)
         {
             swaggAmount -= maxSwagg;
-            addSwaggLevel(1);
+            amount++;
         }
+        addSwaggLevel(amount);
 
         while(swaggAmount < 0)
         {

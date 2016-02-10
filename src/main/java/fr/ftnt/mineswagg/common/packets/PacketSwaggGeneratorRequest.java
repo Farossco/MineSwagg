@@ -11,17 +11,17 @@ import net.minecraft.world.World;
 
 public class PacketSwaggGeneratorRequest implements IMessage
 {
-    public static int x, y, z, choice;
+    public static int x, y, z, amount;
 
     public PacketSwaggGeneratorRequest()
     {}
 
-    public PacketSwaggGeneratorRequest(int x, int y, int z, int choice)
+    public PacketSwaggGeneratorRequest(int x, int y, int z, int amount)
     {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.choice = choice;
+        this.amount = amount;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class PacketSwaggGeneratorRequest implements IMessage
         this.x = buf.readInt();
         this.y = buf.readInt();
         this.z = buf.readInt();
-        this.choice = buf.readInt();
+        this.amount = buf.readInt();
     }
 
     @Override
@@ -39,7 +39,7 @@ public class PacketSwaggGeneratorRequest implements IMessage
         buf.writeInt(this.x);
         buf.writeInt(this.y);
         buf.writeInt(this.z);
-        buf.writeInt(this.choice);
+        buf.writeInt(this.amount);
     }
 
     public static class Handler implements IMessageHandler<PacketSwaggGeneratorRequest, IMessage>
@@ -56,16 +56,13 @@ public class PacketSwaggGeneratorRequest implements IMessage
             {
                 remainingTime = ((TileEntitySwaggiumGenerator)tile).getRemainingTime();
                 stockedSwagg = ((TileEntitySwaggiumGenerator)tile).getStockedSwagg();
-                if(choice == 1)
+
+                if(amount != 0)
                 {
-                    ((TileEntitySwaggiumGenerator)tile).addStockedSwagg(-1);
+                    ((TileEntitySwaggiumGenerator)tile).addStockedSwagg(amount);
                     return null;
                 }
-                else if(choice == 2)
-                {
-                    ((TileEntitySwaggiumGenerator)tile).addStockedSwagg(1);
-                    return null;
-                }
+
             }
             return new PacketSwaggGeneratorAnswer(remainingTime, stockedSwagg);
         }

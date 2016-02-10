@@ -4,6 +4,8 @@ import fr.ftnt.mineswagg.common.MineSwagg;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCompressed;
 import net.minecraft.block.material.MapColor;
+import net.minecraft.init.Blocks;
+import net.minecraft.world.IBlockAccess;
 
 public class BlockSwaggiumCompressed extends BlockCompressed
 {
@@ -15,5 +17,11 @@ public class BlockSwaggiumCompressed extends BlockCompressed
         this.setStepSound(Block.soundTypeMetal);
         this.setBlockName("blockSwaggium");
         this.setBlockTextureName(MineSwagg.MODID + ":swaggium_block");
+    }
+    
+    @Override
+    public boolean isBeaconBase(IBlockAccess worldObj, int x, int y, int z, int beaconX, int beaconY, int beaconZ)
+    {
+        return true;
     }
 }

@@ -19,7 +19,7 @@ public class ContainerSwaggiumGenerator extends Container
             @Override
             public boolean isItemValid(ItemStack stack)
             {
-                return true;
+                return false;
             }
         });
 
@@ -50,10 +50,62 @@ public class ContainerSwaggiumGenerator extends Container
         this.tile.closeInventory();
     }
 
-    @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex)
     {
-        return null;
+        ItemStack itemstack = null;
+        Slot slot = (Slot)this.inventorySlots.get(slotIndex);
+
+        if (slot != null && slot.getHasStack())
+        {
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
+
+            if (slotIndex == 0)
+            {
+                if (!this.mergeItemStack(itemstack1, 1, 37, true))
+                {
+                    return null;
+                }
+
+                slot.onSlotChange(itemstack1, itemstack);
+            }
+            else if (slotIndex >= 1 && slotIndex < 28)
+            {
+                if (!this.mergeItemStack(itemstack1, 28, 37, false))
+                {
+                    return null;
+                }
+            }
+            else if (slotIndex >= 28 && slotIndex < 37)
+            {
+                if (!this.mergeItemStack(itemstack1, 1, 28, false))
+                {
+                    return null;
+                }
+            }
+            else if (!this.mergeItemStack(itemstack1, 1, 37, false))
+            {
+                return null;
+            }
+
+            if (itemstack1.stackSize == 0)
+            {
+                slot.putStack((ItemStack)null);
+            }
+            else
+            {
+                slot.onSlotChanged();
+            }
+
+            if (itemstack1.stackSize == itemstack.stackSize)
+            {
+                return null;
+            }
+
+            slot.onPickupFromSlot(player, itemstack1);
+        }
+
+        return itemstack;
     }
 
     public TileEntitySwaggiumGenerator getTile()

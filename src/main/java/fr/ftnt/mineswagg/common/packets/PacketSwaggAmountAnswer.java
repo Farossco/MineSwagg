@@ -3,7 +3,7 @@ package fr.ftnt.mineswagg.common.packets;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import fr.ftnt.mineswagg.client.SwaggBarHandler;
+import fr.ftnt.mineswagg.common.MineSwaggEventHandler;
 import io.netty.buffer.ByteBuf;
 
 public class PacketSwaggAmountAnswer implements IMessage
@@ -11,9 +11,7 @@ public class PacketSwaggAmountAnswer implements IMessage
     public static int swaggAmount, swaggLevel;
 
     public PacketSwaggAmountAnswer()
-    {
-
-    }
+    {}
 
     public PacketSwaggAmountAnswer(int swaggAmount, int swaggLevel)
     {
@@ -40,9 +38,8 @@ public class PacketSwaggAmountAnswer implements IMessage
         @Override
         public IMessage onMessage(PacketSwaggAmountAnswer message, MessageContext ctx)
         {
-            // System.out.println("time:" + stockedSwagg);
-            SwaggBarHandler.swaggAmount = PacketSwaggAmountAnswer.swaggAmount;
-            SwaggBarHandler.swaggLevel = PacketSwaggAmountAnswer.swaggLevel;
+            MineSwaggEventHandler.setSwaggAmount(PacketSwaggAmountAnswer.swaggAmount);
+            MineSwaggEventHandler.setSwaggLevel(PacketSwaggAmountAnswer.swaggLevel);
 
             return null;
         }

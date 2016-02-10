@@ -7,12 +7,12 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
-import fr.ftnt.mineswagg.client.SwaggBarHandler;
 import fr.ftnt.mineswagg.client.guiHandlers.GuiHandlerSwaggiumGenerator;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggTester;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumCompressed;
@@ -71,8 +71,8 @@ public class MineSwagg
     public static Item ItemSwaggiumAxe, ItemSwaggiumSword, ItemSwaggiumPickaxe, ItemSwaggiumShovel, ItemSwaggiumHoe; // Tools
 
     // Blocks declaration
-    public static Block blockSwaggiumOre, blockSwaggiumCompressed, BlockSwaggiumDoor, blockSwaggiumFence, blockSwaggiumLamp, blockSwaggiumLitLamp, blockSwaggTester, blockSwaggiumGenerator; // Basic
-                                                                                                                                                                                             // Blocks
+    public static Block blockSwaggiumOre, blockSwaggiumCompressed, BlockSwaggiumDoor, blockSwaggiumFence, blockSwaggiumLamp, blockSwaggiumLitLamp, blockSwaggTester, blockSwaggiumGenerator, blockSwaggiumLitGenerator; // Basic
+                                                                                                                                                                                                                        // Blocks
     public static Block blockTutoMetadata; // Tuto Blocks
     public static Block blockSwaggiumChest; // Iron Chest integration
 
@@ -133,7 +133,8 @@ public class MineSwagg
         blockSwaggiumLamp = new BlockSwaggiumLamp(false).setCreativeTab(CreativeTabs.tabRedstone).setBlockTextureName(MineSwagg.MODID + ":swaggium_lamp_off");
         blockSwaggiumLitLamp = new BlockSwaggiumLamp(true).setCreativeTab(null).setBlockTextureName(MineSwagg.MODID + ":swaggium_lamp_on");
         blockSwaggTester = new BlockSwaggTester();
-        blockSwaggiumGenerator = new BlockSwaggiumGenerator();
+        blockSwaggiumGenerator = new BlockSwaggiumGenerator(false);
+        blockSwaggiumLitGenerator = new BlockSwaggiumGenerator(true);
         // Tuto Blocks
         blockTutoMetadata = new BlockTutoMetadata();
 
@@ -147,6 +148,7 @@ public class MineSwagg
         GameRegistry.registerBlock(blockSwaggiumLitLamp, "block_swaggium_lit_lamp");
         GameRegistry.registerBlock(blockSwaggTester, "block_swagg_tester");
         GameRegistry.registerBlock(blockSwaggiumGenerator, "block_swaggium_generator");
+        GameRegistry.registerBlock(blockSwaggiumLitGenerator, "block_swaggium_lit_generator");
 
         OreDictionary.registerOre("ingotSwaggium", itemSwaggiumIngot);
     }
@@ -195,7 +197,14 @@ public class MineSwagg
     public void postInit(FMLPostInitializationEvent event)
     {
         proxy.registerRender();
-        MinecraftForge.EVENT_BUS.register(new SwaggBarHandler());
+        MinecraftForge.EVENT_BUS.register(new MineSwaggEventHandler());
+    }
+
+    @EventHandler
+
+    public void serverStarting(FMLServerStartingEvent event)
+    {
+        event.registerServerCommand(new MineSwaggCommands());
     }
 
     public void addEntity(Class<? extends Entity> entityClass, String name, int id, int backgroungEggColor, int foregroundEggColor)

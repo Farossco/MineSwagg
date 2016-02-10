@@ -3,6 +3,7 @@ package fr.ftnt.mineswagg.common.tileentities;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import fr.ftnt.mineswagg.common.MineSwagg;
+import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumGenerator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -181,8 +182,9 @@ public class TileEntitySwaggiumGenerator extends TileEntity implements IInventor
     public void updateEntity()
     {
         boolean full = false;
+        boolean flag = false;
 
-        if(this.outputStack != null && this.outputStack.stackSize == 64)
+        if(this.outputStack != null && this.outputStack.stackSize >= 64)
         {
             full = true;
         }
@@ -195,6 +197,7 @@ public class TileEntitySwaggiumGenerator extends TileEntity implements IInventor
                 {
                     this.remainingTime = 182;
                     this.stockedSwagg--;
+                    BlockSwaggiumGenerator.updateSwaggGeneratorBlockState(isGenerating(), this.worldObj, this.xCoord, this.yCoord, this.zCoord);
                 }
                 else if(remainingTime == 1)
                 {
@@ -207,11 +210,21 @@ public class TileEntitySwaggiumGenerator extends TileEntity implements IInventor
                         this.outputStack = new ItemStack(MineSwagg.itemSwaggiumIngot, this.outputStack.stackSize + 1);
                     }
                     this.remainingTime = 0;
+                    if(stockedSwagg == 0)
+                    {
+                        flag = true;
+                    }
                 }
                 else if(this.remainingTime > 0)
                 {
                     this.remainingTime--;
                 }
+                if(remainingTime == 0 && flag)
+                {
+                    BlockSwaggiumGenerator.updateSwaggGeneratorBlockState(isGenerating(), this.worldObj, this.xCoord, this.yCoord, this.zCoord);
+                    flag = false;
+                }
+
             }
         }
     }
