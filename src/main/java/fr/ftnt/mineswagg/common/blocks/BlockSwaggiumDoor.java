@@ -20,7 +20,8 @@ public class BlockSwaggiumDoor extends BlockDoor
         this.setHardness(5.0F);
         this.setStepSound(Block.soundTypeMetal);
         this.setBlockName("doorSwaggium");
-        this.setBlockTextureName(MineSwagg.MODID + ":door_swaggium");
+        this.setBlockTextureName(MineSwagg.NAME + ":door_swaggium");
+        this.setCreativeTab(null);
     }
 
     public Item getItemDropped(int p_149650_1_, Random p_149650_2_, int p_149650_3_)

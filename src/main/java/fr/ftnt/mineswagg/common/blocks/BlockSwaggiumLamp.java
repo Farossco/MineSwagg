@@ -24,6 +24,13 @@ public class BlockSwaggiumLamp extends BlockSwaggiumCompressed
         if(lighted)
         {
             this.setLightLevel(1.0F);
+            this.setCreativeTab(null);
+            this.setBlockTextureName(MineSwagg.NAME + ":swaggium_lamp_on");
+        }
+        else
+        {
+            this.setCreativeTab(MineSwagg.customTab);
+            this.setBlockTextureName(MineSwagg.NAME + ":swaggium_lamp_off");
         }
     }
 

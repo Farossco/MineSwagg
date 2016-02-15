@@ -6,12 +6,12 @@ import net.minecraft.item.ItemSword;
 
 public class ItemSwaggiumSword extends ItemSword
 {
-
     public ItemSwaggiumSword()
     {
         super(MineSwagg.toolSwaggium);
-        this.setUnlocalizedName("swordSwaggium");
-        this.setTextureName(MineSwagg.MODID + ":swaggium_sword");
+        setUnlocalizedName("swordSwaggium");
+        setTextureName(MineSwagg.NAME + ":swaggium_sword");
+        setCreativeTab(MineSwagg.customTab);
     }
 
     public boolean getIsRepairable(ItemStack input, ItemStack repair)

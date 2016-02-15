@@ -9,12 +9,12 @@ import net.minecraft.world.World;
 
 public class ItemSwaggiumAxe extends ItemAxe
 {
-
     public ItemSwaggiumAxe()
     {
         super(MineSwagg.toolSwaggium);
-        this.setUnlocalizedName("axeSwaggium");
-        this.setTextureName(MineSwagg.MODID + ":swaggium_axe");
+        setUnlocalizedName("axeSwaggium");
+        setTextureName(MineSwagg.NAME + ":swaggium_axe");
+        setCreativeTab(MineSwagg.customTab);
     }
 
     public boolean getIsRepairable(ItemStack input, ItemStack repair)
@@ -38,5 +38,4 @@ public class ItemSwaggiumAxe extends ItemAxe
 
         return super.onBlockDestroyed(stack, world, block, x, y, z, entity);
     }
-
 }

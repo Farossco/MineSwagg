@@ -21,7 +21,6 @@ import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumFence;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumGenerator;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumLamp;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumOre;
-import fr.ftnt.mineswagg.common.blocks.BlockTutoMetadata;
 import fr.ftnt.mineswagg.common.entities.EntitySwagged;
 import fr.ftnt.mineswagg.common.items.ItemSwaggiumArmor;
 import fr.ftnt.mineswagg.common.items.ItemSwaggiumAxe;
@@ -31,12 +30,12 @@ import fr.ftnt.mineswagg.common.items.ItemSwaggiumPickaxe;
 import fr.ftnt.mineswagg.common.items.ItemSwaggiumShovel;
 import fr.ftnt.mineswagg.common.items.ItemSwaggiumSword;
 import fr.ftnt.mineswagg.common.items.itemSwaggiumIngot;
-import fr.ftnt.mineswagg.common.items.itemBlocks.ItemBlockSwaggiumMetadata;
 import fr.ftnt.mineswagg.common.packets.PacketSwaggAmountAnswer;
 import fr.ftnt.mineswagg.common.packets.PacketSwaggAmountRequest;
 import fr.ftnt.mineswagg.common.packets.PacketSwaggGeneratorAnswer;
 import fr.ftnt.mineswagg.common.packets.PacketSwaggGeneratorRequest;
 import fr.ftnt.mineswagg.common.tileentities.TileEntitySwaggiumGenerator;
+import fr.ftnt.mineswagg.integrations.Integrations;
 import fr.ftnt.mineswagg.proxy.CommonProxy;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -52,17 +51,18 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-@Mod(modid = MineSwagg.MODID, name = MineSwagg.NAME)
+@Mod(modid = MineSwagg.NAME, name = MineSwagg.NAME)
 public class MineSwagg
 {
-    public static final String MODID = "MineSwagg";
     public static final String NAME = "MineSwagg";
 
-    @Instance(MODID)
+    @Instance(NAME)
     public static MineSwagg instance;
 
     @SidedProxy(clientSide = "fr.ftnt.mineswagg.proxy.ClientProxy", serverSide = "fr.ftnt.mineswagg.proxy.CommonProxy")
     public static CommonProxy proxy;
+
+    public static final CreativeTabs customTab = new MineSwaggCreativeTab("MineSwagg");
 
     // Items declaration
     public static Item itemSwaggiumIngot; // Ingot
@@ -71,21 +71,20 @@ public class MineSwagg
     public static Item ItemSwaggiumAxe, ItemSwaggiumSword, ItemSwaggiumPickaxe, ItemSwaggiumShovel, ItemSwaggiumHoe; // Tools
 
     // Blocks declaration
-    public static Block blockSwaggiumOre, blockSwaggiumCompressed, BlockSwaggiumDoor, blockSwaggiumFence, blockSwaggiumLamp, blockSwaggiumLitLamp, blockSwaggTester, blockSwaggiumGenerator, blockSwaggiumLitGenerator; // Basic
-                                                                                                                                                                                                                        // Blocks
-    public static Block blockTutoMetadata; // Tuto Blocks
+    public static Block blockSwaggiumOre, blockSwaggiumCompressed, BlockSwaggiumDoor, blockSwaggiumFence, blockSwaggiumLamp, blockSwaggiumLitLamp, blockSwaggiumLitGenerator; // Swaggium Blocks
     public static Block blockSwaggiumChest; // Iron Chest integration
+    public static Block blockSwaggTester, blockSwaggiumGenerator;
 
     // Materials Declaration
-    public static ArmorMaterial armorSwaggium = EnumHelper.addArmorMaterial("armorSwaggium", 15, new int[] {2, 6, 5, 2}, 30);
-    public static ToolMaterial toolSwaggium = EnumHelper.addToolMaterial("toolSwaggium", 2, 60, 20.0F, 4.0F, 30);
+    public static final ArmorMaterial armorSwaggium = EnumHelper.addArmorMaterial("armorSwaggium", 15, new int[] {2, 6, 5, 2}, 30);
+    public static final ToolMaterial toolSwaggium = EnumHelper.addToolMaterial("toolSwaggium", 2, 60, 20.0F, 4.0F, 30);
 
     public static SimpleNetworkWrapper network;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        network = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
+        network = NetworkRegistry.INSTANCE.newSimpleChannel(NAME);
         network.registerMessage(PacketSwaggAmountRequest.Handler.class, PacketSwaggAmountRequest.class, 0, Side.SERVER);
         network.registerMessage(PacketSwaggAmountAnswer.Handler.class, PacketSwaggAmountAnswer.class, 1, Side.CLIENT);
         network.registerMessage(PacketSwaggGeneratorRequest.Handler.class, PacketSwaggGeneratorRequest.class, 2, Side.SERVER);
@@ -130,20 +129,17 @@ public class MineSwagg
         blockSwaggiumCompressed = new BlockSwaggiumCompressed();
         BlockSwaggiumDoor = new BlockSwaggiumDoor();
         blockSwaggiumFence = new BlockSwaggiumFence();
-        blockSwaggiumLamp = new BlockSwaggiumLamp(false).setCreativeTab(CreativeTabs.tabRedstone).setBlockTextureName(MineSwagg.MODID + ":swaggium_lamp_off");
-        blockSwaggiumLitLamp = new BlockSwaggiumLamp(true).setCreativeTab(null).setBlockTextureName(MineSwagg.MODID + ":swaggium_lamp_on");
+        blockSwaggiumLamp = new BlockSwaggiumLamp(false);
+        blockSwaggiumLitLamp = new BlockSwaggiumLamp(true);
         blockSwaggTester = new BlockSwaggTester();
         blockSwaggiumGenerator = new BlockSwaggiumGenerator(false);
         blockSwaggiumLitGenerator = new BlockSwaggiumGenerator(true);
-        // Tuto Blocks
-        blockTutoMetadata = new BlockTutoMetadata();
 
         // Registering
         GameRegistry.registerBlock(blockSwaggiumOre, "block_swaggium");
         GameRegistry.registerBlock(blockSwaggiumCompressed, "block_antiswagger");
         GameRegistry.registerBlock(BlockSwaggiumDoor, "block_swaggium_door");
         GameRegistry.registerBlock(blockSwaggiumFence, "block_swaggium_fence");
-        GameRegistry.registerBlock(blockTutoMetadata, ItemBlockSwaggiumMetadata.class, "block_tuto_metadata");
         GameRegistry.registerBlock(blockSwaggiumLamp, "block_swaggium_lamp");
         GameRegistry.registerBlock(blockSwaggiumLitLamp, "block_swaggium_lit_lamp");
         GameRegistry.registerBlock(blockSwaggTester, "block_swagg_tester");
@@ -163,10 +159,13 @@ public class MineSwagg
 
         // --------------------------- TileEntities ---------------------------
         // GameRegistry.registerTileEntity(fr.ftnt.mineswagg.common.tileentities.TileEntitySwaggiumChest.class, MODID + ":SwaggiumChest");
-        GameRegistry.registerTileEntity(TileEntitySwaggiumGenerator.class, MODID + ":SwaggGenerator");
+        GameRegistry.registerTileEntity(TileEntitySwaggiumGenerator.class, NAME + ":SwaggGenerator");
 
         // --------------------------- GUI ---------------------------
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandlerSwaggiumGenerator());
+
+        Integrations.init(event);
+
         registerRecipes();
     }
 
@@ -191,6 +190,8 @@ public class MineSwagg
         GameRegistry.addRecipe(new ItemStack(blockSwaggiumGenerator), new Object[] {"GDG", "INI", "OEO", 'G', Item.getItemFromBlock(Blocks.gold_block), 'D', Item.getItemFromBlock(Blocks.diamond_block), 'I', Item.getItemFromBlock(Blocks.iron_block), 'N', Items.nether_star, 'O', Item.getItemFromBlock(Blocks.obsidian), 'E', Items.emerald});
 
         GameRegistry.addSmelting(blockSwaggiumOre, new ItemStack(itemSwaggiumIngot), 0.0F);
+
+        Integrations.registerRecipes();
     }
 
     @EventHandler
@@ -201,7 +202,6 @@ public class MineSwagg
     }
 
     @EventHandler
-
     public void serverStarting(FMLServerStartingEvent event)
     {
         event.registerServerCommand(new MineSwaggCommands());

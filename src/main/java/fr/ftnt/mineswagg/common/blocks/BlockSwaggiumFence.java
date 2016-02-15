@@ -10,11 +10,12 @@ public class BlockSwaggiumFence extends BlockPane
 
     public BlockSwaggiumFence()
     {
-        super(MineSwagg.MODID + ":swaggium_bars", MineSwagg.MODID + ":swaggium_bars", Material.iron, true);
+        super(MineSwagg.NAME + ":swaggium_bars", MineSwagg.NAME + ":swaggium_bars", Material.iron, true);
         this.setHardness(5.0F);
         this.setResistance(10.0F);
         this.setStepSound(Block.soundTypeMetal);
         this.setBlockName("fenceSwaggium");
+        this.setCreativeTab(MineSwagg.customTab);
     }
 
 }

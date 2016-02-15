@@ -4,7 +4,6 @@ import fr.ftnt.mineswagg.common.MineSwagg;
 import fr.ftnt.mineswagg.common.MineSwaggExtendedEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
@@ -15,12 +14,12 @@ public class BlockSwaggTester extends Block
     public BlockSwaggTester()
     {
         super(Material.iron);
-        this.setCreativeTab(CreativeTabs.tabBlock);
+        this.setCreativeTab(MineSwagg.customTab);
         this.setHardness(3.0F);
         this.setResistance(5.0F);
         this.setStepSound(Block.soundTypePiston);
         this.setBlockName("swaggTester");
-        this.setBlockTextureName(MineSwagg.MODID + ":swaggium_block");
+        this.setBlockTextureName(MineSwagg.NAME + ":swaggium_block");
     }
 
     @Override

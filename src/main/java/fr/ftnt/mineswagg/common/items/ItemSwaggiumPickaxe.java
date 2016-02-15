@@ -9,12 +9,12 @@ import net.minecraft.world.World;
 
 public class ItemSwaggiumPickaxe extends ItemPickaxe
 {
-
     public ItemSwaggiumPickaxe()
     {
         super(MineSwagg.toolSwaggium);
-        this.setUnlocalizedName("pickaxeSwaggium");
-        this.setTextureName(MineSwagg.MODID + ":swaggium_pickaxe");
+        setUnlocalizedName("pickaxeSwaggium");
+        setTextureName(MineSwagg.NAME + ":swaggium_pickaxe");
+        setCreativeTab(MineSwagg.customTab);
     }
 
     public boolean getIsRepairable(ItemStack input, ItemStack repair)

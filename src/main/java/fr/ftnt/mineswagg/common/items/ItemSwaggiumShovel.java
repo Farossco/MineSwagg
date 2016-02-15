@@ -6,12 +6,12 @@ import net.minecraft.item.ItemStack;
 
 public class ItemSwaggiumShovel extends ItemSpade
 {
-
     public ItemSwaggiumShovel()
     {
         super(MineSwagg.toolSwaggium);
-        this.setUnlocalizedName("shovelSwaggium");
-        this.setTextureName(MineSwagg.MODID + ":swaggium_shovel");
+        setUnlocalizedName("shovelSwaggium");
+        setTextureName(MineSwagg.NAME + ":swaggium_shovel");
+        setCreativeTab(MineSwagg.customTab);
     }
 
     public boolean getIsRepairable(ItemStack input, ItemStack repair)
@@ -22,5 +22,4 @@ public class ItemSwaggiumShovel extends ItemSpade
         }
         return false;
     }
-
 }

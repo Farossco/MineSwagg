@@ -9,3 +9,5 @@ lib
 *.txt
 sources
 libs
+.externalToolBuilders/
+*.cache-main

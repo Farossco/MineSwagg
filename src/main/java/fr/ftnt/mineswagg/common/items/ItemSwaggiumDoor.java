@@ -11,15 +11,15 @@ import net.minecraft.world.World;
 
 public class ItemSwaggiumDoor extends ItemDoor
 {
-
     private Material doorMaterial;
     private static final String __OBFID = "CL_00000020";
 
     public ItemSwaggiumDoor()
     {
         super(Material.iron);
-        this.setUnlocalizedName("doorSwaggium");
-        this.setTextureName(MineSwagg.MODID + ":door_swaggium");
+        setUnlocalizedName("doorSwaggium");
+        setTextureName(MineSwagg.NAME + ":door_swaggium");
+        setCreativeTab(MineSwagg.customTab);
     }
 
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int p_77648_4_, int p_77648_5_, int p_77648_6_, int p_77648_7_, float p_77648_8_, float p_77648_9_, float p_77648_10_)

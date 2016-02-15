@@ -10,7 +10,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,12 +34,11 @@ public class BlockSwaggiumGenerator extends BlockContainer
     {
         super(Material.iron);
         this.isGenerating = isGenerating;
-        this.setCreativeTab(CreativeTabs.tabBlock);
         this.setHardness(4.5F);
         this.setResistance(4.5F);
         this.setStepSound(soundTypePiston);
         this.setBlockName("swaggiumGenerator");
-        this.setBlockTextureName(MineSwagg.MODID + ":swaggium_generator");
+        this.setBlockTextureName(MineSwagg.NAME + ":swaggium_generator");
 
         if(isGenerating)
         {
@@ -48,7 +46,7 @@ public class BlockSwaggiumGenerator extends BlockContainer
         }
         else
         {
-            this.setCreativeTab(CreativeTabs.tabDecorations);
+            this.setCreativeTab(MineSwagg.customTab);
         }
     }
 
@@ -112,9 +110,9 @@ public class BlockSwaggiumGenerator extends BlockContainer
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister register)
     {
-        this.blockIcon = register.registerIcon("furnace_side");
-        this.blockIconFront = register.registerIcon(MineSwagg.MODID + ":swaggium_generator_" + (this.isGenerating ? "on" : "off"));
-        this.blockIconTop = register.registerIcon("furnace_top");
+        this.blockIcon = register.registerIcon(MineSwagg.NAME + ":swaggium_generator_side");
+        this.blockIconFront = register.registerIcon(MineSwagg.NAME + ":swaggium_generator_" + (this.isGenerating ? "on" : "off"));
+        this.blockIconTop = register.registerIcon(MineSwagg.NAME + ":swaggium_generator_top");
     }
 
     @Override

@@ -62,7 +62,6 @@ public class MineSwaggEventHandler
             packetSleepTime = 0;
         }
 
-        
         int height = resolution.getScaledHeight();
         int width = resolution.getScaledWidth();
         int height2 = height - 500;
@@ -90,7 +89,7 @@ public class MineSwaggEventHandler
 
                 if(swaggLevel > 0)
                 {
-                    
+
                     int l = 8453920;
                     String s = "" + swaggLevel;
                     int j = (width - fontRenderer.getStringWidth(s)) / 2;
@@ -103,11 +102,10 @@ public class MineSwaggEventHandler
                     fontRenderer.drawString("", 0, 0, 0xFFFFFF);
                 }
 
-                
                 minecraft.renderEngine.bindTexture(new ResourceLocation("textures/gui/icons.png"));
                 gui.drawTexturedModalRect(width2 - 91, height2 + 452 - y, 0, 74, maxSwagg, 5);
 
-                minecraft.renderEngine.bindTexture(new ResourceLocation(MineSwagg.MODID + ":textures/gui/icons.png"));
+                minecraft.renderEngine.bindTexture(new ResourceLocation(MineSwagg.NAME + ":textures/gui/icons.png"));
                 gui.drawTexturedModalRect(width2 - 91, height2 + 452 - y, 0, 0, swaggAmount % maxSwagg, 5);
 
                 minecraft.renderEngine.bindTexture(new ResourceLocation("textures/gui/icons.png"));
@@ -155,14 +153,14 @@ public class MineSwaggEventHandler
             event.distance = 0F;
         }
     }
-    
+
     @SubscribeEvent
     public void onEntityAttacking(AttackEntityEvent event)
     {
         EntityPlayer player = event.entityPlayer;
-        
-        
+
     }
+
     @SubscribeEvent
     public void onEntityConstructing(EntityConstructing event)
     {

@@ -5,23 +5,20 @@ import java.util.Random;
 import fr.ftnt.mineswagg.common.MineSwagg;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockOre;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
 
 public class BlockSwaggiumOre extends BlockOre
 {
-    private static final String __OBFID = "CL_00000282";
-
     public BlockSwaggiumOre()
     {
         super();
-        this.setCreativeTab(CreativeTabs.tabBlock);
+        this.setCreativeTab(MineSwagg.customTab);
         this.setHardness(3.0F);
         this.setResistance(5.0F);
         this.setStepSound(Block.soundTypePiston);
         this.setBlockName("oreSwaggium");
-        this.setBlockTextureName(MineSwagg.MODID + ":swaggium_ore");
+        this.setBlockTextureName(MineSwagg.NAME + ":swaggium_ore");
     }
 
     public Item getItemDropped(int p_149650_1_, Random p_149650_2_, int p_149650_3_)

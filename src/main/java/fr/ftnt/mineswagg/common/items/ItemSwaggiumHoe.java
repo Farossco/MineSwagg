@@ -6,12 +6,12 @@ import net.minecraft.item.ItemStack;
 
 public class ItemSwaggiumHoe extends ItemHoe
 {
-
     public ItemSwaggiumHoe()
     {
         super(MineSwagg.toolSwaggium);
-        this.setUnlocalizedName("hoeSwaggium");
-        this.setTextureName(MineSwagg.MODID + ":swaggium_hoe");
+        setUnlocalizedName("hoeSwaggium");
+        setTextureName(MineSwagg.NAME + ":swaggium_hoe");
+        setCreativeTab(MineSwagg.customTab);
     }
 
     public boolean getIsRepairable(ItemStack input, ItemStack repair)

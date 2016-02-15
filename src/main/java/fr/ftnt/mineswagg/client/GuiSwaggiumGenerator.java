@@ -19,7 +19,7 @@ import net.minecraft.world.World;
 
 public class GuiSwaggiumGenerator extends GuiContainer
 {
-    private static final ResourceLocation texture = new ResourceLocation(MineSwagg.MODID + ":textures/gui/container/swaggGenerator.png");
+    private static final ResourceLocation texture = new ResourceLocation(MineSwagg.NAME + ":textures/gui/container/swaggGenerator.png");
     private TileEntitySwaggiumGenerator tile;
     ContainerSwaggiumGenerator container = (inventorySlots instanceof ContainerSwaggiumGenerator) ? (ContainerSwaggiumGenerator)inventorySlots : null;
     Minecraft minecraft = Minecraft.getMinecraft();
@@ -105,7 +105,7 @@ public class GuiSwaggiumGenerator extends GuiContainer
         if(inventorySlots instanceof ContainerSwaggiumGenerator)
         {
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            this.mc.getTextureManager().bindTexture(new ResourceLocation(MineSwagg.MODID + ":textures/gui/container/swaggiumGenerator.png"));
+            this.mc.getTextureManager().bindTexture(new ResourceLocation(MineSwagg.NAME + ":textures/gui/container/swaggiumGenerator.png"));
             int k = (this.width - this.xSize) / 2;
             int l = (this.height - this.ySize) / 2;
             this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
@@ -113,7 +113,7 @@ public class GuiSwaggiumGenerator extends GuiContainer
             World world = minecraft.theWorld;
 
             int i1 = 16 - container.getTile().getRemainingTimeScaled(16);
-            int i2 = ((int)world.getWorldTime() / 2) % 32;
+            int i2 = (int)world.getWorldTime() % 32;
 
             if(tile.getStackInSlot(0) == null)
                 this.drawTexturedModalRect(k + 116, l + 35, 176 + (i2 / 16) * 16, (i2 % 16) * 16, 16, 16);
