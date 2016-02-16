@@ -77,7 +77,7 @@ public class MineSwagg
 
     // Materials Declaration
     public static final ArmorMaterial armorSwaggium = EnumHelper.addArmorMaterial("armorSwaggium", 15, new int[] {2, 6, 5, 2}, 30);
-    public static final ToolMaterial toolSwaggium = EnumHelper.addToolMaterial("toolSwaggium", 2, 60, 20.0F, 4.0F, 30);
+    public static final ToolMaterial toolSwaggium = EnumHelper.addToolMaterial("toolSwaggium", 4, 1337, 25.0F, 5.5F, 30);
 
     public static SimpleNetworkWrapper network;
 

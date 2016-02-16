@@ -22,37 +22,26 @@ public class ItemSwaggiumDoor extends ItemDoor
         setCreativeTab(MineSwagg.customTab);
     }
 
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int p_77648_4_, int p_77648_5_, int p_77648_6_, int p_77648_7_, float p_77648_8_, float p_77648_9_, float p_77648_10_)
+    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float posX, float posY, float posZ)
     {
-        if(p_77648_7_ != 1)
-        {
+        if(side != 1)
             return false;
-        }
-        else
+
+        ++y;
+        Block block;
+        block = MineSwagg.BlockSwaggiumDoor;
+
+        if(player.canPlayerEdit(x, y, z, side, stack) && player.canPlayerEdit(x, y + 1, z, side, stack))
         {
-            ++p_77648_5_;
-            Block block;
-
-            block = MineSwagg.BlockSwaggiumDoor;
-
-            if(player.canPlayerEdit(p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_, stack) && player.canPlayerEdit(p_77648_4_, p_77648_5_ + 1, p_77648_6_, p_77648_7_, stack))
-            {
-                if(!block.canPlaceBlockAt(world, p_77648_4_, p_77648_5_, p_77648_6_))
-                {
-                    return false;
-                }
-                else
-                {
-                    int i1 = MathHelper.floor_double((double)((player.rotationYaw + 180.0F) * 4.0F / 360.0F) - 0.5D) & 3;
-                    placeDoorBlock(world, p_77648_4_, p_77648_5_, p_77648_6_, i1, block);
-                    --stack.stackSize;
-                    return true;
-                }
-            }
-            else
-            {
+            if(!block.canPlaceBlockAt(world, x, y, z))
                 return false;
-            }
+
+            int i1 = MathHelper.floor_double((double)((player.rotationYaw + 180.0F) * 4.0F / 360.0F) - 0.5D) & 3;
+            placeDoorBlock(world, x, y, z, i1, block);
+            --stack.stackSize;
+            return true;
         }
+
+        return false;
     }
 }

@@ -13,14 +13,15 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
 
 public class MineSwaggEventHandler
 {
@@ -36,7 +37,6 @@ public class MineSwaggEventHandler
     private static ScaledResolution resolution;
     @SideOnly(Side.CLIENT)
     private static GuiIngame gui;
-    @SideOnly(Side.CLIENT)
     private static MineSwaggExtendedEntity props;
     @SideOnly(Side.CLIENT)
     private static World world;
@@ -155,10 +155,17 @@ public class MineSwaggEventHandler
     }
 
     @SubscribeEvent
-    public void onEntityAttacking(AttackEntityEvent event)
+    public void onEntityDeath(LivingDeathEvent event)
     {
-        EntityPlayer player = event.entityPlayer;
-
+        DamageSource source = event.source;
+        EntityPlayer player;
+        if(source.getEntity() instanceof EntityPlayer)
+        {
+            player = (EntityPlayer)source.getEntity();
+            props = MineSwaggExtendedEntity.get(player);
+            props.addSwaggAmount(1);
+            System.out.println("level up");
+        }
     }
 
     @SubscribeEvent

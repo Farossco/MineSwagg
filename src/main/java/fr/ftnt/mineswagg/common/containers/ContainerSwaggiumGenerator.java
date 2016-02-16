@@ -104,7 +104,6 @@ public class ContainerSwaggiumGenerator extends Container
 
             slot.onPickupFromSlot(player, itemstack1);
         }
-
         return itemstack;
     }
 
