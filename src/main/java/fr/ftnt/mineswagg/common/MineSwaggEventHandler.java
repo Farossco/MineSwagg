@@ -25,8 +25,8 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 public class MineSwaggEventHandler
 {
-    @SideOnly(Side.CLIENT)
     private static int swaggAmount, swaggLevel, packetSleepTime = 0;
+    private static MineSwaggExtendedEntity props;
     @SideOnly(Side.CLIENT)
     private static Minecraft minecraft;
     @SideOnly(Side.CLIENT)
@@ -37,10 +37,9 @@ public class MineSwaggEventHandler
     private static ScaledResolution resolution;
     @SideOnly(Side.CLIENT)
     private static GuiIngame gui;
-    private static MineSwaggExtendedEntity props;
+   
     @SideOnly(Side.CLIENT)
     private static World world;
-
     @SideOnly(Side.CLIENT)
     @SubscribeEvent(priority = EventPriority.NORMAL)
     public void onRender(RenderGameOverlayEvent event)
