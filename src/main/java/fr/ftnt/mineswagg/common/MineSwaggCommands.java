@@ -2,6 +2,8 @@ package fr.ftnt.mineswagg.common;
 
 import java.util.List;
 
+import fr.ftnt.mineswagg.common.packets.PacketSwaggAmountAnswer;
+import fr.ftnt.mineswagg.common.packets.PacketSwaggAmountRequest;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -42,58 +44,6 @@ public class MineSwaggCommands extends CommandBase implements ICommand
         return "MineSwagg.command.usage";
     }
 
-    /*
-     * @Override
-     * public void processCommand(ICommandSender sender, String[] arguments)
-     * {
-     * World world = sender.getEntityWorld();
-     * MineSwaggExtendedEntity props = MineSwaggExtendedEntity.get((EntityPlayer)sender);
-     * String senderName = sender.getCommandSenderName();
-     * if(!world.isRemote)
-     * {
-     * try
-     * {
-     * if(arguments[0].equals("add"))
-     * {
-     * if(arguments[0].charAt(arguments[0].length() - 1) == 'L')
-     * {
-     * int amount = Integer.parseInt(arguments[1].replace("L", ""));
-     * }
-     * else
-     * {
-     * int amount = Integer.parseInt(arguments[1]);
-     * }
-     * if(amount < 0)
-     * {
-     * sender.addChatMessage(new ChatComponentText("Cannot give player negative swagg points"));
-     * }
-     * else
-     * {
-     * props.addSwaggAmount(amount);
-     * sender.addChatMessage(new ChatComponentText("Given " + amount + " Swagg to " + senderName));
-     * }
-     * }
-     * else if(arguments[0].equals("add"))
-     * {
-     * }
-     * else if(arguments[0].equals("reset"))
-     * {
-     * props.setSwaggAmount(0);
-     * sender.addChatMessage(new ChatComponentText("Set " + senderName + " Swagg to 0"));
-     * }
-     * else
-     * {
-     * sender.addChatMessage(new ChatComponentText("MineSwagg.command.usage"));
-     * }
-     * }
-     * catch(Exception e)
-     * {
-     * sender.addChatMessage(new ChatComponentText("MineSwagg.command.usage"));
-     * e.printStackTrace();
-     * }
-     * }
-     * }
-     */
     @Override
     public void processCommand(ICommandSender sender, String[] arguments)
     {
@@ -118,6 +68,7 @@ public class MineSwaggCommands extends CommandBase implements ICommand
                 i *= -1;
 
             EntityPlayerMP player;
+            
 
             if(arguments.length > 1)
             {
@@ -127,7 +78,7 @@ public class MineSwaggCommands extends CommandBase implements ICommand
             {
                 player = getCommandSenderAsPlayer(sender);
             }
-
+            
             MineSwaggExtendedEntity props = MineSwaggExtendedEntity.get(player);
 
             if(flag)

@@ -3,6 +3,7 @@ package fr.ftnt.mineswagg.common.packets;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import fr.ftnt.mineswagg.common.MineSwagg;
 import fr.ftnt.mineswagg.common.MineSwaggExtendedEntity;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -44,6 +45,7 @@ public class PacketSwaggAmountRequest implements IMessage
         this.swaggAmount = swaggAmount;
         this.swaggLevel = swaggLevel;
         this.updateSwaggAmount = this.updateSwaggLevel = true;
+        this.add = false;
     }
 
     @Override
@@ -71,6 +73,7 @@ public class PacketSwaggAmountRequest implements IMessage
         @Override
         public IMessage onMessage(PacketSwaggAmountRequest message, MessageContext ctx)
         {
+            MineSwagg.logger.debug("Request Recieved");
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
             MineSwaggExtendedEntity props = MineSwaggExtendedEntity.get(player);
             int swaggAmount = props.getSwaggAmount();
@@ -79,25 +82,31 @@ public class PacketSwaggAmountRequest implements IMessage
             {
                 if(add)
                 {
-                    props.addSwaggAmount(PacketSwaggAmountRequest.swaggAmount);
+                    props.addSwaggAmountNoSync(PacketSwaggAmountRequest.swaggAmount);
                 }
                 else
                 {
-                    props.setSwaggAmount(PacketSwaggAmountRequest.swaggAmount);
+                    props.setSwaggAmountNoSync(PacketSwaggAmountRequest.swaggAmount);
                 }
             }
             if(updateSwaggLevel)
             {
                 if(add)
                 {
-                    props.addSwaggLevel(PacketSwaggAmountRequest.swaggLevel);
+                    props.addSwaggLevelNoSync(PacketSwaggAmountRequest.swaggLevel);
                 }
                 else
                 {
-                    props.setSwaggLevel(PacketSwaggAmountRequest.swaggLevel);
+                    props.setSwaggLevelNoSync(PacketSwaggAmountRequest.swaggLevel);
                 }
             }
-            return new PacketSwaggAmountAnswer(swaggAmount, swaggLevel);
+            if(!updateSwaggLevel && !updateSwaggAmount)
+            {
+                MineSwagg.logger.debug("Get Answer from server: swagg Amount: " + swaggAmount + " / Swagg Level: " + swaggLevel);
+                return new PacketSwaggAmountAnswer(swaggAmount, swaggLevel);
+            }
+                
+            return null;
         }
     }
 }

@@ -1,5 +1,7 @@
 package fr.ftnt.mineswagg.common;
 
+import org.apache.logging.log4j.Logger;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -80,10 +82,14 @@ public class MineSwagg
     public static final ToolMaterial toolSwaggium = EnumHelper.addToolMaterial("toolSwaggium", 4, 1337, 25.0F, 5.5F, 30);
 
     public static SimpleNetworkWrapper network;
+    
+    public static Logger logger;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        this.logger = event.getModLog();
+        
         network = NetworkRegistry.INSTANCE.newSimpleChannel(NAME);
         network.registerMessage(PacketSwaggAmountRequest.Handler.class, PacketSwaggAmountRequest.class, 0, Side.SERVER);
         network.registerMessage(PacketSwaggAmountAnswer.Handler.class, PacketSwaggAmountAnswer.class, 1, Side.CLIENT);

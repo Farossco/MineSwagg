@@ -85,14 +85,12 @@ public class GuiSwaggiumGenerator extends GuiContainer
                 if(container.getTile().getStockedSwagg() - amount >= 0)
                 {
                     props.addSwaggLevel(amount);
-                    MineSwagg.network.sendToServer(new PacketSwaggAmountRequest(false, props.getSwaggLevel(), false));
                     MineSwagg.network.sendToServer(new PacketSwaggGeneratorRequest(tile.xCoord, tile.yCoord, tile.zCoord, amount * -1));
                 }
                 break;
             case 1:
                 if(props.consumeSwaggLevel(amount))
                 {
-                    MineSwagg.network.sendToServer(new PacketSwaggAmountRequest(false, props.getSwaggLevel(), false));
                     MineSwagg.network.sendToServer(new PacketSwaggGeneratorRequest(tile.xCoord, tile.yCoord, tile.zCoord, amount));
                 }
                 return;

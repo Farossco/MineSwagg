@@ -1,65 +1,47 @@
 package fr.ftnt.mineswagg.common;
 
+import org.apache.logging.log4j.Logger;
+
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import fr.ftnt.mineswagg.common.packets.PacketSwaggAmountRequest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.boss.EntityDragon;
+import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 public class MineSwaggEventHandler
 {
-    private static int swaggAmount, swaggLevel, packetSleepTime = 0;
     private static MineSwaggExtendedEntity props;
-    @SideOnly(Side.CLIENT)
-    private static Minecraft minecraft;
-    @SideOnly(Side.CLIENT)
-    private static EntityClientPlayerMP player;
-    @SideOnly(Side.CLIENT)
-    private static FontRenderer fontRenderer;
-    @SideOnly(Side.CLIENT)
-    private static ScaledResolution resolution;
-    @SideOnly(Side.CLIENT)
-    private static GuiIngame gui;
-   
-    @SideOnly(Side.CLIENT)
-    private static World world;
+
     @SideOnly(Side.CLIENT)
     @SubscribeEvent(priority = EventPriority.NORMAL)
     public void onRender(RenderGameOverlayEvent event)
     {
-        minecraft = Minecraft.getMinecraft();
-        player = minecraft.thePlayer;
-        fontRenderer = minecraft.fontRenderer;
-        resolution = new ScaledResolution(minecraft, minecraft.displayWidth, minecraft.displayHeight);
-        gui = minecraft.ingameGUI;
+        
+        Minecraft minecraft = Minecraft.getMinecraft();
+        EntityClientPlayerMP player = minecraft.thePlayer;
+        FontRenderer fontRenderer = minecraft.fontRenderer;
+        ScaledResolution resolution = new ScaledResolution(minecraft, minecraft.displayWidth, minecraft.displayHeight);
+        GuiIngame gui = minecraft.ingameGUI;
         props = MineSwaggExtendedEntity.get(player);
-        world = minecraft.theWorld;
-
-        packetSleepTime += 1;
-        if(packetSleepTime >= 1)
-        { // -- Getting swagg amount and level from server --
-            MineSwagg.network.sendToServer(new PacketSwaggAmountRequest());
-            props.setSwaggAmount(this.swaggAmount);
-            props.setSwaggLevel(this.swaggLevel);
-            packetSleepTime = 0;
-        }
+        World world = minecraft.theWorld;
 
         int height = resolution.getScaledHeight();
         int width = resolution.getScaledWidth();
@@ -73,7 +55,7 @@ public class MineSwaggEventHandler
 
         if(swaggAmount > 0 || swaggLevel > 0)
         {
-            if(!this.player.capabilities.isCreativeMode)
+            if(!player.capabilities.isCreativeMode)
             {
                 int y;
                 if(player.getEquipmentInSlot(1) == null && player.getEquipmentInSlot(2) == null && player.getEquipmentInSlot(3) == null && player.getEquipmentInSlot(4) == null)
@@ -113,32 +95,17 @@ public class MineSwaggEventHandler
     }
 
     @SideOnly(Side.CLIENT)
-    public static void setSwaggAmount(int swaggAmountArg)
-    {
-        swaggAmount = swaggAmountArg;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static void setSwaggLevel(int swaggLevelArg)
-    {
-        swaggLevel = swaggLevelArg;
-    }
-
     @SubscribeEvent
-    public void onLivingHurt(LivingHurtEvent event)
+    public void onPlayerJoinServer(EntityJoinWorldEvent event)
     {
-        ItemStack boots = event.entityLiving.getEquipmentInSlot(1);
-        ItemStack leggings = event.entityLiving.getEquipmentInSlot(2);
-        ItemStack chestplate = event.entityLiving.getEquipmentInSlot(3);
-        ItemStack helmet = event.entityLiving.getEquipmentInSlot(4);
-
-        if(boots != null && boots.getItem() == MineSwagg.itemSwaggiumBoots && leggings != null && leggings.getItem() == MineSwagg.itemSwaggiumLeggings && chestplate != null && chestplate.getItem() == MineSwagg.itemSwaggiumChestplate && helmet != null && helmet.getItem() == MineSwagg.itemSwaggiumHelmet)
-        {
-            if(event.source.getEntity() != null && event.source.getEntity() instanceof EntityCreeper)
+        if(event.world.isRemote)
+            if(event.entity instanceof EntityPlayer)
             {
-                event.setCanceled(true);
+                Minecraft minecraft = Minecraft.getMinecraft();
+                EntityClientPlayerMP player = minecraft.thePlayer;
+                props = MineSwaggExtendedEntity.get(player);
+                props.syncFromServer();
             }
-        }
     }
 
     @SubscribeEvent
@@ -153,18 +120,28 @@ public class MineSwaggEventHandler
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onEntityDeath(LivingDeathEvent event)
     {
-        DamageSource source = event.source;
-        EntityPlayer player;
-        if(source.getEntity() instanceof EntityPlayer)
+        Entity source = event.source.getEntity();
+        Entity target = event.entity;
+
+        if(target.getEntityData().getBoolean("HasGivenSwagg") || !(target instanceof EntityLiving) || !(source instanceof EntityPlayer))
         {
-            player = (EntityPlayer)source.getEntity();
-            props = MineSwaggExtendedEntity.get(player);
-            props.addSwaggAmount(1);
-            System.out.println("level up");
+            return;
         }
+
+        EntityLiving living = (EntityLiving)target;
+        EntityPlayer player = (EntityPlayer)source;
+        int livingHealth = (int)living.getMaxHealth();
+        props = MineSwaggExtendedEntity.get(player);
+
+        props.addSwaggAmount(livingHealth);
+        props.addSwaggLevel(target instanceof EntityDragon ? 7 : target instanceof EntityWither ? 3 : 0);
+        target.getEntityData().setBoolean("HasGivenSwagg", true);
+
+        Logger logger = MineSwagg.logger;
+        logger.debug("addswagg: " + livingHealth);
     }
 
     @SubscribeEvent

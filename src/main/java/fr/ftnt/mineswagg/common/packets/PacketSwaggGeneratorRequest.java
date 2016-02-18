@@ -62,7 +62,6 @@ public class PacketSwaggGeneratorRequest implements IMessage
                     ((TileEntitySwaggiumGenerator)tile).addStockedSwagg(amount);
                     return null;
                 }
-
             }
             return new PacketSwaggGeneratorAnswer(remainingTime, stockedSwagg);
         }

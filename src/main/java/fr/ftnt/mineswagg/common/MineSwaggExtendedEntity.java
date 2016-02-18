@@ -1,7 +1,10 @@
 package fr.ftnt.mineswagg.common;
 
+import fr.ftnt.mineswagg.common.packets.PacketSwaggAmountAnswer;
+import fr.ftnt.mineswagg.common.packets.PacketSwaggAmountRequest;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
@@ -61,6 +64,19 @@ public class MineSwaggExtendedEntity implements IExtendedEntityProperties
             this.swaggAmount -= amount;
             testLevelUp();
         }
+        syncWithServer();
+        return sufficient;
+    }
+
+    public boolean consumeSwaggAmountNoSync(int amount)
+    {
+        boolean sufficient = amount <= this.swaggAmount + swaggLevel * maxSwagg;
+
+        if(sufficient)
+        {
+            this.swaggAmount -= amount;
+            testLevelUp();
+        }
         return sufficient;
     }
 
@@ -69,13 +85,33 @@ public class MineSwaggExtendedEntity implements IExtendedEntityProperties
         return consumeSwaggAmount(maxSwagg * amount);
     }
 
+    public boolean consumeSwaggLevelNoSync(int amount)
+    {
+        return consumeSwaggAmountNoSync(maxSwagg * amount);
+    }
+
     public void addSwaggAmount(int amount)
     {
         this.swaggAmount += amount;
         testLevelUp();
+        syncWithServer();
+    }
+
+    public void addSwaggAmountNoSync(int amount)
+    {
+        this.swaggAmount += amount;
+        testLevelUpNoSync();
     }
 
     public void addSwaggLevel(int amount)
+    {
+        this.swaggLevel += amount;
+        if(amount > 0)
+            playSound();
+        syncWithServer();
+    }
+
+    public void addSwaggLevelNoSync(int amount)
     {
         this.swaggLevel += amount;
         if(amount > 0)
@@ -91,6 +127,23 @@ public class MineSwaggExtendedEntity implements IExtendedEntityProperties
             amount++;
         }
         addSwaggLevel(amount);
+
+        while(swaggAmount < 0)
+        {
+            swaggAmount += maxSwagg;
+            swaggLevel--;
+        }
+    }
+    
+    private void testLevelUpNoSync()
+    {
+        int amount = 0;
+        while(swaggAmount >= maxSwagg)
+        {
+            swaggAmount -= maxSwagg;
+            amount++;
+        }
+        addSwaggLevelNoSync(amount);
 
         while(swaggAmount < 0)
         {
@@ -122,13 +175,27 @@ public class MineSwaggExtendedEntity implements IExtendedEntityProperties
 
     public boolean setSwaggAmount(int swaggAmount)
     {
-
         if(swaggAmount >= 0)
         {
             this.swaggAmount = swaggAmount;
+            testLevelUp();
+            syncWithServer();
             return true;
         }
         testLevelUp();
+        syncWithServer();
+        return false;
+    }
+
+    public boolean setSwaggAmountNoSync(int swaggAmount)
+    {
+        if(swaggAmount >= 0)
+        {
+            this.swaggAmount = swaggAmount;
+            testLevelUpNoSync();
+            return true;
+        }
+        testLevelUpNoSync();
         return false;
     }
 
@@ -137,8 +204,39 @@ public class MineSwaggExtendedEntity implements IExtendedEntityProperties
         if(swaggLevel >= 0)
         {
             this.swaggLevel = swaggLevel;
+            syncWithServer();
             return true;
         }
         return false;
+    }
+
+    public boolean setSwaggLevelNoSync(int swaggLevel)
+    {
+        if(swaggLevel >= 0)
+        {
+            this.swaggLevel = swaggLevel;
+            return true;
+        }
+        return false;
+    }
+
+    public void syncWithServer()
+    {
+        if(player.worldObj.isRemote)
+        {
+            MineSwagg.network.sendToServer(new PacketSwaggAmountRequest(swaggAmount, swaggLevel));
+            MineSwagg.logger.debug("Sync to server");
+        }
+        else
+        {
+            MineSwagg.network.sendTo(new PacketSwaggAmountAnswer(swaggAmount, swaggLevel), (EntityPlayerMP)player);
+            MineSwagg.logger.debug("Sync to client");
+        }
+    }
+
+    public void syncFromServer()
+    {
+        MineSwagg.network.sendToServer(new PacketSwaggAmountRequest());
+        MineSwagg.logger.debug("Sync from server");
     }
 }

@@ -25,17 +25,21 @@ public class BlockSwaggTester extends Block
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float posX, float posY, float posZ)
     {
+
         MineSwaggExtendedEntity props = MineSwaggExtendedEntity.get(player);
 
         if(side == 1)
         {
             if(player.isSneaking())
             {
-                props.addSwaggLevel(10);
+                if(!world.isRemote)
+                {
+                    props.addSwaggLevel(1);
+                }
             }
             else
             {
-                props.addSwaggLevel(1);
+                MineSwagg.logger.info(props.getSwaggAmount() + " / " + props.getSwaggLevel());
             }
 
         }
@@ -44,13 +48,20 @@ public class BlockSwaggTester extends Block
         {
             if(player.isSneaking())
             {
-                props.consumeSwaggLevel(10);
+                if(!world.isRemote)
+                {
+                    props.consumeSwaggLevel(10);
+                }
             }
             else
             {
-                props.consumeSwaggLevel(1);
 
             }
+            if(!world.isRemote)
+            {
+                props.consumeSwaggLevel(1);
+            }
+
         }
 
         // System.out.println((!world.isRemote ? "Server: " : "Client: ") + "Swagg: " + props.getSwaggAmount());
