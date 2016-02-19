@@ -3,9 +3,8 @@ package fr.ftnt.mineswagg.client;
 import org.lwjgl.opengl.GL11;
 
 import fr.ftnt.mineswagg.common.MineSwagg;
-import fr.ftnt.mineswagg.common.MineSwaggExtendedEntity;
+import fr.ftnt.mineswagg.common.MineSwaggExtendedEntityPlayer;
 import fr.ftnt.mineswagg.common.containers.ContainerSwaggiumGenerator;
-import fr.ftnt.mineswagg.common.packets.PacketSwaggAmountRequest;
 import fr.ftnt.mineswagg.common.packets.PacketSwaggGeneratorRequest;
 import fr.ftnt.mineswagg.common.tileentities.TileEntitySwaggiumGenerator;
 import net.minecraft.client.Minecraft;
@@ -24,7 +23,7 @@ public class GuiSwaggiumGenerator extends GuiContainer
     ContainerSwaggiumGenerator container = (inventorySlots instanceof ContainerSwaggiumGenerator) ? (ContainerSwaggiumGenerator)inventorySlots : null;
     Minecraft minecraft = Minecraft.getMinecraft();
     EntityClientPlayerMP player = minecraft.thePlayer;
-    MineSwaggExtendedEntity props = MineSwaggExtendedEntity.get(player);
+    MineSwaggExtendedEntityPlayer props = MineSwaggExtendedEntityPlayer.get(player);
 
     public GuiSwaggiumGenerator(TileEntitySwaggiumGenerator tile, InventoryPlayer inventory)
     {

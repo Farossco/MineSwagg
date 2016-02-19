@@ -8,7 +8,6 @@ import net.minecraft.world.World;
 
 public class EntitySwagged extends EntityMob
 {
-
     public EntitySwagged(World world)
     {
         super(world);
@@ -21,9 +20,8 @@ public class EntitySwagged extends EntityMob
         this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(20.0D);
     }
 
-    public Item getFropItem()
+    public Item getDropItem()
     {
         return Items.apple;
-
     }
 }

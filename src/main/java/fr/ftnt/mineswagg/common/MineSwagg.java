@@ -23,6 +23,7 @@ import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumFence;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumGenerator;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumLamp;
 import fr.ftnt.mineswagg.common.blocks.BlockSwaggiumOre;
+import fr.ftnt.mineswagg.common.entities.EntitySwaggOrb;
 import fr.ftnt.mineswagg.common.entities.EntitySwagged;
 import fr.ftnt.mineswagg.common.items.ItemSwaggiumArmor;
 import fr.ftnt.mineswagg.common.items.ItemSwaggiumAxe;
@@ -82,14 +83,14 @@ public class MineSwagg
     public static final ToolMaterial toolSwaggium = EnumHelper.addToolMaterial("toolSwaggium", 4, 1337, 25.0F, 5.5F, 30);
 
     public static SimpleNetworkWrapper network;
-    
+
     public static Logger logger;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
         this.logger = event.getModLog();
-        
+
         network = NetworkRegistry.INSTANCE.newSimpleChannel(NAME);
         network.registerMessage(PacketSwaggAmountRequest.Handler.class, PacketSwaggAmountRequest.class, 0, Side.SERVER);
         network.registerMessage(PacketSwaggAmountAnswer.Handler.class, PacketSwaggAmountAnswer.class, 1, Side.CLIENT);
@@ -159,7 +160,8 @@ public class MineSwagg
     public void init(FMLInitializationEvent event)
     {
         // --------------------------- Entities ---------------------------
-        addEntity(EntitySwagged.class, "swagged", 420, 0xd4192b, 0x522dbc);
+        addEntityMob(EntitySwagged.class, "swagged", 420, 0xd4192b, 0x522dbc);
+        addEntityMob(EntitySwaggOrb.class, "swaggOrb", 421, 0xd4192b, 0x522dbc);
         MinecraftForge.EVENT_BUS.register(new MineSwaggEventHandler());
         proxy.registerRender();
 
@@ -213,9 +215,15 @@ public class MineSwagg
         event.registerServerCommand(new MineSwaggCommands());
     }
 
-    public void addEntity(Class<? extends Entity> entityClass, String name, int id, int backgroungEggColor, int foregroundEggColor)
+    public void addEntityMob(Class<? extends Entity> entityClass, String name, int id, int backgroungEggColor, int foregroundEggColor)
     {
         EntityRegistry.registerGlobalEntityID(entityClass, name, EntityRegistry.findGlobalUniqueEntityId(), backgroungEggColor, foregroundEggColor);
+        EntityRegistry.registerModEntity(entityClass, name, id, this, 40, 1, true);
+    }
+
+    public void addEntity(Class<? extends Entity> entityClass, String name, int id)
+    {
+        EntityRegistry.registerGlobalEntityID(entityClass, name, EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(entityClass, name, id, this, 40, 1, true);
     }
 }

@@ -1,11 +1,8 @@
 package fr.ftnt.mineswagg.common.items;
 
 import fr.ftnt.mineswagg.common.MineSwagg;
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 public class ItemSwaggiumAxe extends ItemAxe
 {

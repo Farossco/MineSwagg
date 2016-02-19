@@ -2,8 +2,6 @@ package fr.ftnt.mineswagg.common;
 
 import java.util.List;
 
-import fr.ftnt.mineswagg.common.packets.PacketSwaggAmountAnswer;
-import fr.ftnt.mineswagg.common.packets.PacketSwaggAmountRequest;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -68,7 +66,6 @@ public class MineSwaggCommands extends CommandBase implements ICommand
                 i *= -1;
 
             EntityPlayerMP player;
-            
 
             if(arguments.length > 1)
             {
@@ -78,8 +75,8 @@ public class MineSwaggCommands extends CommandBase implements ICommand
             {
                 player = getCommandSenderAsPlayer(sender);
             }
-            
-            MineSwaggExtendedEntity props = MineSwaggExtendedEntity.get(player);
+
+            MineSwaggExtendedEntityPlayer props = MineSwaggExtendedEntityPlayer.get(player);
 
             if(flag)
             {

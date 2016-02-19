@@ -6,8 +6,7 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import fr.ftnt.mineswagg.common.MineSwagg;
-import fr.ftnt.mineswagg.common.MineSwaggEventHandler;
-import fr.ftnt.mineswagg.common.MineSwaggExtendedEntity;
+import fr.ftnt.mineswagg.common.MineSwaggExtendedEntityPlayer;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -47,8 +46,8 @@ public class PacketSwaggAmountAnswer implements IMessage
         {
             Minecraft minecraft = Minecraft.getMinecraft();
             EntityClientPlayerMP player = minecraft.thePlayer;
-            MineSwaggExtendedEntity props = MineSwaggExtendedEntity.get(player);
-            
+            MineSwaggExtendedEntityPlayer props = MineSwaggExtendedEntityPlayer.get(player);
+
             MineSwagg.logger.debug("Answer Recieved: Swagg Amount: " + swaggAmount + " / Swagg Level: " + swaggLevel);
             props.setSwaggAmountNoSync(swaggAmount);
             props.setSwaggLevelNoSync(swaggLevel);

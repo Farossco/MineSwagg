@@ -10,26 +10,26 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.MinecraftForge;
 
-public class MineSwaggExtendedEntity implements IExtendedEntityProperties
+public class MineSwaggExtendedEntityPlayer implements IExtendedEntityProperties
 {
     public final static String EXT_PROP_NAME = "MineSwaggExtendedPlayer";
     private final EntityPlayer player;
     private int swaggAmount, swaggLevel;
-    private final int maxSwagg = 182;
+    private static final int maxSwagg = 182;
 
-    public MineSwaggExtendedEntity(EntityPlayer player)
+    public MineSwaggExtendedEntityPlayer(EntityPlayer player)
     {
         this.player = player;
     }
 
     public static final void register(EntityPlayer player)
     {
-        player.registerExtendedProperties(MineSwaggExtendedEntity.EXT_PROP_NAME, new MineSwaggExtendedEntity(player));
+        player.registerExtendedProperties(MineSwaggExtendedEntityPlayer.EXT_PROP_NAME, new MineSwaggExtendedEntityPlayer(player));
     }
 
-    public static final MineSwaggExtendedEntity get(EntityPlayer player)
+    public static final MineSwaggExtendedEntityPlayer get(EntityPlayer player)
     {
-        return (MineSwaggExtendedEntity)player.getExtendedProperties(EXT_PROP_NAME);
+        return (MineSwaggExtendedEntityPlayer)player.getExtendedProperties(EXT_PROP_NAME);
     }
 
     @Override
@@ -134,7 +134,7 @@ public class MineSwaggExtendedEntity implements IExtendedEntityProperties
             swaggLevel--;
         }
     }
-    
+
     private void testLevelUpNoSync()
     {
         int amount = 0;
@@ -168,7 +168,7 @@ public class MineSwaggExtendedEntity implements IExtendedEntityProperties
         return this.swaggLevel;
     }
 
-    public int getMaxSwagg()
+    public static int getMaxSwagg()
     {
         return maxSwagg;
     }

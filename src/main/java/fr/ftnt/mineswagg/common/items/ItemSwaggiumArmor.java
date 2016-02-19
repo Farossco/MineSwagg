@@ -1,7 +1,7 @@
 package fr.ftnt.mineswagg.common.items;
 
 import fr.ftnt.mineswagg.common.MineSwagg;
-import fr.ftnt.mineswagg.common.MineSwaggExtendedEntity;
+import fr.ftnt.mineswagg.common.MineSwaggExtendedEntityPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemArmor;
@@ -55,7 +55,7 @@ public class ItemSwaggiumArmor extends ItemArmor
     public void onArmorTick(World world, EntityPlayer player, ItemStack stack)
     {
         this.swaggIncreaser += 1;
-        MineSwaggExtendedEntity props = MineSwaggExtendedEntity.get(player);
+        MineSwaggExtendedEntityPlayer props = MineSwaggExtendedEntityPlayer.get(player);
         if(this.swaggIncreaser >= 1000000 / (type == 0 ? 4000 : type == 1 ? 12000 : type == 2 ? 6000 : type == 3 ? 2000 : 1) && !world.isRemote)
         {
             props.addSwaggAmount(1);
