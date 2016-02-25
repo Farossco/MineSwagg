@@ -37,14 +37,14 @@ public class GuiSwaggiumGenerator extends GuiContainer
         if(inventorySlots instanceof ContainerSwaggiumGenerator)
         {
             String s = this.tile.hasCustomInventoryName() ? this.tile.getInventoryName() : I18n.format(this.tile.getInventoryName(), new Object[0]);
-            String s2 = I18n.format("container.playerSwaggLevel", new Object[0]);
+            String s2 = I18n.format(("container.playerSwaggLevel"), new Object[0]);
             this.fontRendererObj.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 6, 4210752);
             this.fontRendererObj.drawString(I18n.format("container.inventory", new Object[0]), 8, this.ySize - 96 + 2, 4210752);
-            this.fontRendererObj.drawString(I18n.format(s2 + ": " + props.getSwaggLevel(), new Object[0]), 8, this.ySize - 150 + 2, 4210752);
+            this.fontRendererObj.drawString(I18n.format(s2 + (props.isNegativeSwagg() ? ": -" : ": ") + props.getSwaggLevel(), new Object[0]), 8, this.ySize - 150 + 2, 4210752);
             this.fontRendererObj.drawString("-", 34 - 7, 39, 0xCCCCCC);
             this.fontRendererObj.drawString("-", 35 - 7, 39, 0xCCCCCC);
             this.fontRendererObj.drawString("+", 76 + 7, 39, 0xCCCCCC);
-            String s3 = Integer.toString(container.getTile().getStockedSwagg());
+            String s3 = "" + container.getTile().getStockedSwagg();
             this.fontRendererObj.drawString(s3, 58 - this.fontRendererObj.getStringWidth(s3) / 2, 39, 4210752);
         }
     }
@@ -83,12 +83,12 @@ public class GuiSwaggiumGenerator extends GuiContainer
             case 0:
                 if(container.getTile().getStockedSwagg() - amount >= 0)
                 {
-                    props.addSwaggLevel(amount);
+                    props.addSwaggLevel(amount, true);
                     MineSwagg.network.sendToServer(new PacketSwaggGeneratorRequest(tile.xCoord, tile.yCoord, tile.zCoord, amount * -1));
                 }
                 break;
             case 1:
-                if(props.consumeSwaggLevel(amount))
+                if(props.consumeSwaggLevel(amount, true))
                 {
                     MineSwagg.network.sendToServer(new PacketSwaggGeneratorRequest(tile.xCoord, tile.yCoord, tile.zCoord, amount));
                 }

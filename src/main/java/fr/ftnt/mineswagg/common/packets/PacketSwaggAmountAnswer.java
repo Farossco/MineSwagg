@@ -14,14 +14,16 @@ import net.minecraft.client.entity.EntityClientPlayerMP;
 public class PacketSwaggAmountAnswer implements IMessage
 {
     public static int swaggAmount, swaggLevel;
+    public static boolean negativeSwagg;
 
     public PacketSwaggAmountAnswer()
     {}
 
-    public PacketSwaggAmountAnswer(int swaggAmount, int swaggLevel)
+    public PacketSwaggAmountAnswer(int swaggAmount, int swaggLevel, boolean negativeSwagg)
     {
         this.swaggAmount = swaggAmount;
         this.swaggLevel = swaggLevel;
+        this.negativeSwagg = negativeSwagg;
     }
 
     @Override
@@ -29,6 +31,7 @@ public class PacketSwaggAmountAnswer implements IMessage
     {
         this.swaggAmount = buf.readInt();
         this.swaggLevel = buf.readInt();
+        this.negativeSwagg = buf.readBoolean();
     }
 
     @Override
@@ -36,6 +39,7 @@ public class PacketSwaggAmountAnswer implements IMessage
     {
         buf.writeInt(this.swaggAmount);
         buf.writeInt(this.swaggLevel);
+        buf.writeBoolean(negativeSwagg);
     }
 
     public static class Handler implements IMessageHandler<PacketSwaggAmountAnswer, IMessage>
@@ -48,9 +52,9 @@ public class PacketSwaggAmountAnswer implements IMessage
             EntityClientPlayerMP player = minecraft.thePlayer;
             MineSwaggExtendedEntityPlayer props = MineSwaggExtendedEntityPlayer.get(player);
 
-            MineSwagg.logger.debug("Answer Recieved: Swagg Amount: " + swaggAmount + " / Swagg Level: " + swaggLevel);
-            props.setSwaggAmountNoSync(swaggAmount);
-            props.setSwaggLevelNoSync(swaggLevel);
+            props.setSwaggAmount(swaggAmount, false);
+            props.setSwaggLevel(swaggLevel, false);
+            props.negativeSwagg = negativeSwagg;
 
             return null;
         }

@@ -60,9 +60,9 @@ public class MineSwaggCommands extends CommandBase implements ICommand
             }
 
             int i = parseInt(sender, s);
-            boolean flag1 = i < 0;
+            boolean negative = i < 0;
 
-            if(flag1)
+            if(negative)
                 i *= -1;
 
             EntityPlayerMP player;
@@ -80,42 +80,26 @@ public class MineSwaggCommands extends CommandBase implements ICommand
 
             if(flag)
             {
-                if(flag1)
+                if(negative)
                 {
-                    if(props.consumeSwaggLevel(i))
-                    {
-                        func_152373_a(sender, this, "commands.swagg.success.negative.levels" + (i <= 1 ? ".singular" : ""), new Object[] {Integer.valueOf(i), player.getCommandSenderName()});
-
-                    }
-                    else
-                    {
-                        props.setSwaggLevel(0);
-                        func_152373_a(sender, this, "commands.swagg.success.negative.levels" + (i <= 1 ? ".singular" : ""), new Object[] {Integer.valueOf(i), player.getCommandSenderName()});
-                    }
+                    props.consumeSwaggLevel(i, true);
                 }
                 else
                 {
-                    props.addSwaggLevel(i);
+                    props.addSwaggLevel(i, true);
                     func_152373_a(sender, this, "commands.swagg.success.levels" + (i <= 1 ? ".singular" : ""), new Object[] {Integer.valueOf(i), player.getCommandSenderName()});
                 }
             }
             else
             {
-                if(flag1)
+                if(negative)
                 {
-                    if(props.consumeSwaggAmount(i))
-                    {
-                        func_152373_a(sender, this, "commands.swagg.success.negative", new Object[] {Integer.valueOf(i), player.getCommandSenderName()});
-                    }
-                    else
-                    {
-                        props.setSwaggAmount(0);
-                        func_152373_a(sender, this, "commands.swagg.success.negative", new Object[] {Integer.valueOf(i), player.getCommandSenderName()});
-                    }
+                    props.consumeSwaggAmount(i, true);
+                    func_152373_a(sender, this, "commands.swagg.success.negative", new Object[] {Integer.valueOf(i), player.getCommandSenderName()});
                 }
                 else
                 {
-                    props.addSwaggAmount(i);
+                    props.addSwaggAmount(i, true);
                     func_152373_a(sender, this, "commands.swagg.success", new Object[] {Integer.valueOf(i), player.getCommandSenderName()});
                 }
             }

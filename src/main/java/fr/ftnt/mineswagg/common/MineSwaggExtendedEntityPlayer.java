@@ -15,6 +15,10 @@ public class MineSwaggExtendedEntityPlayer implements IExtendedEntityProperties
     public final static String EXT_PROP_NAME = "MineSwaggExtendedPlayer";
     private final EntityPlayer player;
     private int swaggAmount, swaggLevel;
+    public boolean negativeSwagg;
+    private boolean addingSwaggLevel;
+    private boolean soundPlayed;
+
     private static final int maxSwagg = 182;
 
     public MineSwaggExtendedEntityPlayer(EntityPlayer player)
@@ -38,6 +42,7 @@ public class MineSwaggExtendedEntityPlayer implements IExtendedEntityProperties
         NBTTagCompound properties = new NBTTagCompound();
         properties.setInteger("swaggAmount", this.swaggAmount);
         properties.setInteger("swaggLevel", this.swaggLevel);
+        properties.setBoolean("negativeSwagg", this.negativeSwagg);
         compound.setTag(EXT_PROP_NAME, properties);
     }
 
@@ -47,6 +52,7 @@ public class MineSwaggExtendedEntityPlayer implements IExtendedEntityProperties
         NBTTagCompound properties = (NBTTagCompound)compound.getTag(EXT_PROP_NAME);
         this.swaggAmount = properties.getInteger("swaggAmount");
         this.swaggLevel = properties.getInteger("swaggLevel");
+        this.negativeSwagg = properties.getBoolean("negativeSwagg");
     }
 
     @Override
@@ -55,107 +61,108 @@ public class MineSwaggExtendedEntityPlayer implements IExtendedEntityProperties
         MinecraftForge.EVENT_BUS.register(new MineSwaggEventHandler());
     }
 
-    public boolean consumeSwaggAmount(int amount)
+    public boolean consumeSwaggAmount(int amount, boolean sync)
     {
-        boolean sufficient = amount <= this.swaggAmount + swaggLevel * maxSwagg;
-
-        if(sufficient)
+        soundPlayed = false;
+        for(int i = 0; i < amount; i++)
         {
-            this.swaggAmount -= amount;
-            testLevelUp();
+            consumeOneSwaggAmount();
         }
-        syncWithServer();
-        return sufficient;
+
+        if(sync)
+            syncWithServer();
+
+        return true;
     }
 
-    public boolean consumeSwaggAmountNoSync(int amount)
+    private boolean consumeOneSwaggAmount()
     {
-        boolean sufficient = amount <= this.swaggAmount + swaggLevel * maxSwagg;
-
-        if(sufficient)
+        if(isNegativeSwagg())
         {
-            this.swaggAmount -= amount;
-            testLevelUp();
+            this.swaggAmount++;
         }
-        return sufficient;
-    }
-
-    public boolean consumeSwaggLevel(int amount)
-    {
-        return consumeSwaggAmount(maxSwagg * amount);
-    }
-
-    public boolean consumeSwaggLevelNoSync(int amount)
-    {
-        return consumeSwaggAmountNoSync(maxSwagg * amount);
-    }
-
-    public void addSwaggAmount(int amount)
-    {
-        this.swaggAmount += amount;
+        else if(this.swaggAmount == 0 && this.swaggLevel == 0)
+        {
+            this.swaggAmount++;
+            this.setNegativeSwagg();
+        }
+        else
+        {
+            this.swaggAmount--;
+        }
         testLevelUp();
-        syncWithServer();
+
+        return true;
     }
 
-    public void addSwaggAmountNoSync(int amount)
+    public boolean consumeSwaggLevel(int amount, boolean sync)
     {
-        this.swaggAmount += amount;
-        testLevelUpNoSync();
+        return consumeSwaggAmount(amount * maxSwagg, sync);
+    }
+    
+    public void addSwaggAmount(int amount, boolean sync)
+    {
+        soundPlayed = false;
+        for(int i = 0; i < amount; i++)
+        {
+            addOneSwaggAmount();
+        }
+
+        if(sync)
+            syncWithServer();
     }
 
-    public void addSwaggLevel(int amount)
+    private void addOneSwaggAmount()
     {
-        this.swaggLevel += amount;
-        if(amount > 0)
-            playSound();
-        syncWithServer();
+        if(isPositiveSwagg())
+        {
+            this.swaggAmount++;
+        }
+        else if(this.swaggAmount == 0 && this.swaggLevel == 0)
+        {
+            this.swaggAmount++;
+            this.setPositiveSwagg();
+        }
+        else
+        {
+            this.swaggAmount--;
+        }
+        testLevelUp();
     }
 
-    public void addSwaggLevelNoSync(int amount)
+    public void addSwaggLevel(int amount, boolean sync)
     {
-        this.swaggLevel += amount;
-        if(amount > 0)
-            playSound();
+        addSwaggAmount(amount * maxSwagg, sync);
     }
 
     private void testLevelUp()
     {
-        int amount = 0;
-        while(swaggAmount >= maxSwagg)
+        if(swaggAmount >= maxSwagg)
         {
             swaggAmount -= maxSwagg;
-            amount++;
+            this.swaggLevel++;
+            
+            playSound();
+            soundPlayed = true;
         }
-        addSwaggLevel(amount);
 
-        while(swaggAmount < 0)
+        if(swaggAmount < 0)
         {
             swaggAmount += maxSwagg;
             swaggLevel--;
         }
-    }
 
-    private void testLevelUpNoSync()
-    {
-        int amount = 0;
-        while(swaggAmount >= maxSwagg)
+        if(swaggLevel < 0)
         {
-            swaggAmount -= maxSwagg;
-            amount++;
-        }
-        addSwaggLevelNoSync(amount);
-
-        while(swaggAmount < 0)
-        {
-            swaggAmount += maxSwagg;
-            swaggLevel--;
+            swaggLevel = -swaggLevel;
+            negativeSwagg = !negativeSwagg;
         }
     }
 
     private void playSound()
     {
-        World world = player.worldObj;
-        world.playSoundAtEntity(this.player, "random.levelup", 1, 2);
+        if(!(player.worldObj == null) && !soundPlayed)
+            player.worldObj.playSoundAtEntity(this.player, "random.levelup", 1, 2);
     }
 
     public int getSwaggAmount()
@@ -173,48 +180,29 @@ public class MineSwaggExtendedEntityPlayer implements IExtendedEntityProperties
         return maxSwagg;
     }
 
-    public boolean setSwaggAmount(int swaggAmount)
+    public boolean setSwaggAmount(int swaggAmount, boolean sync)
     {
         if(swaggAmount >= 0)
         {
             this.swaggAmount = swaggAmount;
             testLevelUp();
-            syncWithServer();
+            if(sync)
+                syncWithServer();
             return true;
         }
         testLevelUp();
-        syncWithServer();
-        return false;
-    }
-
-    public boolean setSwaggAmountNoSync(int swaggAmount)
-    {
-        if(swaggAmount >= 0)
-        {
-            this.swaggAmount = swaggAmount;
-            testLevelUpNoSync();
-            return true;
-        }
-        testLevelUpNoSync();
-        return false;
-    }
-
-    public boolean setSwaggLevel(int swaggLevel)
-    {
-        if(swaggLevel >= 0)
-        {
-            this.swaggLevel = swaggLevel;
+        if(sync)
             syncWithServer();
-            return true;
-        }
         return false;
     }
 
-    public boolean setSwaggLevelNoSync(int swaggLevel)
+    public boolean setSwaggLevel(int swaggLevel, boolean sync)
     {
         if(swaggLevel >= 0)
         {
             this.swaggLevel = swaggLevel;
+            if(sync)
+                syncWithServer();
             return true;
         }
         return false;
@@ -224,19 +212,36 @@ public class MineSwaggExtendedEntityPlayer implements IExtendedEntityProperties
     {
         if(player.worldObj.isRemote)
         {
-            MineSwagg.network.sendToServer(new PacketSwaggAmountRequest(swaggAmount, swaggLevel));
-            MineSwagg.logger.debug("Sync to server");
+            MineSwagg.network.sendToServer(new PacketSwaggAmountRequest(swaggAmount, swaggLevel, negativeSwagg));
         }
         else
         {
-            MineSwagg.network.sendTo(new PacketSwaggAmountAnswer(swaggAmount, swaggLevel), (EntityPlayerMP)player);
-            MineSwagg.logger.debug("Sync to client");
+            MineSwagg.network.sendTo(new PacketSwaggAmountAnswer(swaggAmount, swaggLevel, negativeSwagg), (EntityPlayerMP)player);
         }
+    }
+
+    public boolean isNegativeSwagg()
+    {
+        return negativeSwagg;
+    }
+
+    public void setNegativeSwagg()
+    {
+        this.negativeSwagg = true;
+    }
+
+    public boolean isPositiveSwagg()
+    {
+        return !negativeSwagg;
+    }
+
+    public void setPositiveSwagg()
+    {
+        this.negativeSwagg = false;
     }
 
     public void syncFromServer()
     {
         MineSwagg.network.sendToServer(new PacketSwaggAmountRequest());
-        MineSwagg.logger.debug("Sync from server");
     }
 }

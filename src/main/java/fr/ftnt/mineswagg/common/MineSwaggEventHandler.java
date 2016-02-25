@@ -38,36 +38,26 @@ public class MineSwaggEventHandler
 
         int height = resolution.getScaledHeight();
         int width = resolution.getScaledWidth();
-        int height2 = height - 500;
-        int width2 = width / 2;
+        int heightCenter = height / 2;
+        int widthRight = width - 20;
         int swaggAmount = props.getSwaggAmount();
         int swaggLevel = props.getSwaggLevel();
         int maxSwagg = props.getMaxSwagg();
+        int swaggAmountScaled = (int)(swaggAmount / 1.4);
+        boolean playerHasNegativeSwagg = props.isNegativeSwagg();
         String swaggAmountString = "Swagg: " + swaggAmount;
         String swaggLevelString = "" + swaggLevel;
 
         if(swaggAmount > 0 || swaggLevel > 0)
         {
-            // if(!player.capabilities.isCreativeMode)
+            if(!player.capabilities.isCreativeMode || player.getDisplayName().contains("Iclario"))
             {
-                int y;
-                if(player.getEquipmentInSlot(1) == null && player.getEquipmentInSlot(2) == null && player.getEquipmentInSlot(3) == null && player.getEquipmentInSlot(4) == null)
+                // if(swaggLevel > 0)
                 {
-                    y = 0;
-                }
-                else
-                {
-                    y = 10;
-
-                }
-
-                if(swaggLevel > 0)
-                {
-
-                    int l = 8453920;
-                    String s = "" + swaggLevel;
-                    int j = (width - fontRenderer.getStringWidth(s)) / 2;
-                    int k = height - 54 - y;
+                    int l = playerHasNegativeSwagg ? 0xFF0000 : 0x00FF00;
+                    String s = (playerHasNegativeSwagg ? "- " : "") + swaggLevel;
+                    int j = width - fontRenderer.getStringWidth(s) - 25;
+                    int k = height / 2 + 7;
                     fontRenderer.drawString(s, j + 1, k, 0);
                     fontRenderer.drawString(s, j - 1, k, 0);
                     fontRenderer.drawString(s, j, k + 1, 0);
@@ -76,11 +66,19 @@ public class MineSwaggEventHandler
                     fontRenderer.drawString("", 0, 0, 0xFFFFFF);
                 }
 
-                minecraft.renderEngine.bindTexture(new ResourceLocation("textures/gui/icons.png"));
-                gui.drawTexturedModalRect(width2 - 91, height2 + 452 - y, 0, 74, maxSwagg, 5);
-
                 minecraft.renderEngine.bindTexture(new ResourceLocation(MineSwagg.NAME + ":textures/gui/icons.png"));
-                gui.drawTexturedModalRect(width2 - 91, height2 + 452 - y, 0, 0, swaggAmount % maxSwagg, 5);
+
+                gui.drawTexturedModalRect(widthRight, heightCenter - (int)(182 / 1.5), 0, 0, 5, 182);
+                gui.drawTexturedModalRect(widthRight, heightCenter + (int)(182 / 1.5) - 162, 0, 0, 5, 182);
+
+                if(!playerHasNegativeSwagg)
+                {
+                    gui.drawTexturedModalRect(widthRight, heightCenter - swaggAmountScaled + 10, 5, 181 - swaggAmountScaled, 5, swaggAmountScaled + 1);
+                }
+                else
+                {
+                    gui.drawTexturedModalRect(widthRight, heightCenter + 10, 5, 1, 5, swaggAmountScaled);
+                }
 
                 minecraft.renderEngine.bindTexture(new ResourceLocation("textures/gui/icons.png"));
             }
@@ -105,47 +103,33 @@ public class MineSwaggEventHandler
     public void onEntityDeath(LivingUpdateEvent event)
     {
         if(event.entity.worldObj.isRemote)
-        {
             return;
-        }
 
         if(!(event.entity instanceof EntityCreature))
-        {
             return;
-        }
 
         EntityCreature entity = (EntityCreature)event.entity;
 
         if(MineSwaggExtendedEntityCreature.get(entity) == null)
         {
-            MineSwagg.logger.info("Generate Extended Property for " + entity.getCommandSenderName());
             MineSwaggExtendedEntityCreature.register(entity);
         }
 
         if(entity.getExtendedProperties(MineSwaggExtendedEntityCreature.EXT_PROP_NAME) == null)
-        {
             entity.registerExtendedProperties(MineSwaggExtendedEntityCreature.EXT_PROP_NAME, new MineSwaggExtendedEntityCreature(entity));
-        }
 
         MineSwaggExtendedEntityCreature props = MineSwaggExtendedEntityCreature.get(entity);
 
         if(props.recentlyHit > 0)
-        {
             props.recentlyHit--;
-        }
 
         if(entity.getHealth() > 0.0F || entity.deathTime != 19 || entity.getEntityData().getBoolean("SwaggIsGiven"))
-        {
             return;
-        }
 
         if(!entity.worldObj.isRemote && props.recentlyHit > 0 && (entity.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot")))
         {
-            MineSwagg.logger.info("Looting Swagg from " + entity.getCommandSenderName());
-            for(int i = 0; i < 3; i++)
-            {
-                entity.worldObj.spawnEntityInWorld(new EntitySwaggOrb(entity.worldObj, entity.posX, entity.posY, entity.posZ, 200));
-            }
+            for(int i = 0; i < 4; i++)
+                entity.worldObj.spawnEntityInWorld(new EntitySwaggOrb(entity.worldObj, entity.posX, entity.posY, entity.posZ, (int)entity.getMaxHealth() / 2));
         }
         entity.getEntityData().setBoolean("SwaggIsGiven", true);
     }
@@ -154,14 +138,10 @@ public class MineSwaggEventHandler
     public void onEntityHittedByPlayer(AttackEntityEvent event)
     {
         if(event.entity.worldObj.isRemote)
-        {
             return;
-        }
 
         if(!(event.target instanceof EntityCreature))
-        {
             return;
-        }
 
         EntityCreature target = (EntityCreature)event.target;
 

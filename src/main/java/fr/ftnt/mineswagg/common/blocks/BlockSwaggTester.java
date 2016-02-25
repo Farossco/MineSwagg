@@ -5,6 +5,7 @@ import fr.ftnt.mineswagg.common.MineSwaggExtendedEntityPlayer;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
 public class BlockSwaggTester extends Block
@@ -34,12 +35,12 @@ public class BlockSwaggTester extends Block
             {
                 if(!world.isRemote)
                 {
-                    props.addSwaggLevel(1);
+                    props.addSwaggLevel(1, true);
                 }
             }
             else
             {
-                MineSwagg.logger.info(props.getSwaggAmount() + " / " + props.getSwaggLevel());
+                player.addChatMessage(new ChatComponentText((world.isRemote ? "Client: " : "Server: ") + "Amount: " + props.getSwaggAmount() + " / Level: " + props.getSwaggLevel() + " / Negative: " + props.isNegativeSwagg()));
             }
 
         }
@@ -50,7 +51,7 @@ public class BlockSwaggTester extends Block
             {
                 if(!world.isRemote)
                 {
-                    props.consumeSwaggLevel(10);
+                    props.consumeSwaggLevel(10, true);
                 }
             }
             else
@@ -59,7 +60,7 @@ public class BlockSwaggTester extends Block
             }
             if(!world.isRemote)
             {
-                props.consumeSwaggLevel(1);
+                props.consumeSwaggLevel(1, true);
             }
 
         }

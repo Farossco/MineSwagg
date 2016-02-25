@@ -58,7 +58,7 @@ public class ItemSwaggiumArmor extends ItemArmor
         MineSwaggExtendedEntityPlayer props = MineSwaggExtendedEntityPlayer.get(player);
         if(this.swaggIncreaser >= 1000000 / (type == 0 ? 4000 : type == 1 ? 12000 : type == 2 ? 6000 : type == 3 ? 2000 : 1) && !world.isRemote)
         {
-            props.addSwaggAmount(1);
+            props.addSwaggAmount(1, true);
             this.swaggIncreaser = 0;
         }
     }

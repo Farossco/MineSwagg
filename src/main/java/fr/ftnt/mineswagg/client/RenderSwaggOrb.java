@@ -38,7 +38,6 @@ public class RenderSwaggOrb extends RenderXPOrb
         int k = j % 65536;
         int l = j / 65536;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)k / 1.0F, (float)l / 1.0F);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         float f10 = 255.0F;
         float f11 = ((float)entity.xpColor + lightlevel) / 2.0F;
         l = (int)((MathHelper.sin(f11 + 0.0F) + 1.0F) * 0.5F * f10);
@@ -51,7 +50,6 @@ public class RenderSwaggOrb extends RenderXPOrb
         GL11.glScalef(f9, f9, f9);
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
-        tessellator.setColorRGBA_I(k1, 128);
         tessellator.setNormal(0.0F, 1.0F, 0.0F);
         tessellator.addVertexWithUV((double)(0.0F - f7), (double)(0.0F - f8), 0.0D, (double)f2, (double)f5);
         tessellator.addVertexWithUV((double)(f6 - f7), (double)(0.0F - f8), 0.0D, (double)f3, (double)f5);

@@ -2,6 +2,7 @@ package fr.ftnt.mineswagg.common.entities;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import fr.ftnt.mineswagg.common.MineSwagg;
 import fr.ftnt.mineswagg.common.MineSwaggExtendedEntityPlayer;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
@@ -65,7 +66,7 @@ public class EntitySwaggOrb extends EntityXPOrb
                 player.xpCooldown = 2;
                 this.worldObj.playSoundAtEntity(player, "random.orb", 0.1F, 0.5F * ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.8F));
                 player.onItemPickup(this, 1);
-                props.addSwaggAmount(this.swaggValue);
+                props.addSwaggAmount(this.swaggValue, true);
                 this.setDead();
             }
         }

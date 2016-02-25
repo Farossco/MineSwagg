@@ -11,7 +11,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
 public class PacketSwaggAmountRequest implements IMessage
 {
     public static int swaggAmount, swaggLevel;
-    public static boolean updateSwaggAmount = false, updateSwaggLevel = false, add = false;
+    public static boolean negativeSwagg;
+    public static boolean updateSwaggAmount = false, updateSwaggLevel = false, updateNegativeSwagg = false, add = false;
 
     public PacketSwaggAmountRequest()
     {
@@ -40,11 +41,12 @@ public class PacketSwaggAmountRequest implements IMessage
 
     }
 
-    public PacketSwaggAmountRequest(int swaggAmount, int swaggLevel)
+    public PacketSwaggAmountRequest(int swaggAmount, int swaggLevel, boolean negativeSwagg)
     {
         this.swaggAmount = swaggAmount;
         this.swaggLevel = swaggLevel;
-        this.updateSwaggAmount = this.updateSwaggLevel = true;
+        this.negativeSwagg = negativeSwagg;
+        this.updateSwaggAmount = this.updateSwaggLevel = this.updateNegativeSwagg = true;
         this.add = false;
     }
 
@@ -53,6 +55,7 @@ public class PacketSwaggAmountRequest implements IMessage
     {
         this.swaggAmount = buf.readInt();
         this.swaggLevel = buf.readInt();
+        this.negativeSwagg = buf.readBoolean();
         this.updateSwaggAmount = buf.readBoolean();
         this.updateSwaggLevel = buf.readBoolean();
         this.add = buf.readBoolean();
@@ -63,6 +66,7 @@ public class PacketSwaggAmountRequest implements IMessage
     {
         buf.writeInt(this.swaggAmount);
         buf.writeInt(this.swaggLevel);
+        buf.writeBoolean(negativeSwagg);
         buf.writeBoolean(this.updateSwaggAmount);
         buf.writeBoolean(this.updateSwaggLevel);
         buf.writeBoolean(this.add);
@@ -73,7 +77,6 @@ public class PacketSwaggAmountRequest implements IMessage
         @Override
         public IMessage onMessage(PacketSwaggAmountRequest message, MessageContext ctx)
         {
-            MineSwagg.logger.debug("Request Recieved");
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
             MineSwaggExtendedEntityPlayer props = MineSwaggExtendedEntityPlayer.get(player);
             int swaggAmount = props.getSwaggAmount();
@@ -82,28 +85,34 @@ public class PacketSwaggAmountRequest implements IMessage
             {
                 if(add)
                 {
-                    props.addSwaggAmountNoSync(PacketSwaggAmountRequest.swaggAmount);
+                    props.addSwaggAmount(PacketSwaggAmountRequest.swaggAmount, false);
                 }
                 else
                 {
-                    props.setSwaggAmountNoSync(PacketSwaggAmountRequest.swaggAmount);
+                    props.setSwaggAmount(PacketSwaggAmountRequest.swaggAmount, false);
                 }
             }
+
             if(updateSwaggLevel)
             {
                 if(add)
                 {
-                    props.addSwaggLevelNoSync(PacketSwaggAmountRequest.swaggLevel);
+                    props.addSwaggLevel(PacketSwaggAmountRequest.swaggLevel, false);
                 }
                 else
                 {
-                    props.setSwaggLevelNoSync(PacketSwaggAmountRequest.swaggLevel);
+                    props.setSwaggLevel(PacketSwaggAmountRequest.swaggLevel, false);
                 }
             }
+
+            if(updateNegativeSwagg)
+            {
+                props.negativeSwagg = negativeSwagg;
+            }
+
             if(!updateSwaggLevel && !updateSwaggAmount)
             {
-                MineSwagg.logger.debug("Get Answer from server: swagg Amount: " + swaggAmount + " / Swagg Level: " + swaggLevel);
-                return new PacketSwaggAmountAnswer(swaggAmount, swaggLevel);
+                return new PacketSwaggAmountAnswer(swaggAmount, swaggLevel, negativeSwagg);
             }
 
             return null;
