@@ -38,12 +38,10 @@ public class GuiSwaggiumGenerator extends GuiContainer
         {
             String s = this.tile.hasCustomInventoryName() ? this.tile.getInventoryName() : I18n.format(this.tile.getInventoryName(), new Object[0]);
             String s2 = I18n.format(("container.playerSwaggLevel"), new Object[0]);
-            this.fontRendererObj.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 6, 4210752);
-            this.fontRendererObj.drawString(I18n.format("container.inventory", new Object[0]), 8, this.ySize - 96 + 2, 4210752);
-            this.fontRendererObj.drawString(I18n.format(s2 + (props.isNegativeSwagg() ? ": -" : ": ") + props.getSwaggLevel(), new Object[0]), 8, this.ySize - 150 + 2, 4210752);
-            this.fontRendererObj.drawString("-", 34 - 7, 39, 0xCCCCCC);
-            this.fontRendererObj.drawString("-", 35 - 7, 39, 0xCCCCCC);
-            this.fontRendererObj.drawString("+", 76 + 7, 39, 0xCCCCCC);
+            this.fontRendererObj.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 6, 0x404040);
+            this.fontRendererObj.drawString(I18n.format("container.inventory", new Object[0]), 8, this.ySize - 96 + 2, 0x404040);
+            this.fontRendererObj.drawString(I18n.format(s2, new Object[0]), 8, this.ySize - 148, 0x404040);
+            this.fontRendererObj.drawString(I18n.format(props.getSwaggLevel() + " (" + props.getSwaggAmount() + ")", new Object[0]), 8 + this.fontRendererObj.getStringWidth(" " + s2), this.ySize - 148, props.getSwaggAmount() == 0 && props.getSwaggLevel() == 0 ? 0x404040 : props.isNegativeSwagg() ? 0xF00000 : 0x00A000);
             String s3 = "" + container.getTile().getStockedSwagg();
             this.fontRendererObj.drawString(s3, 58 - this.fontRendererObj.getStringWidth(s3) / 2, 39, 4210752);
         }
@@ -52,8 +50,8 @@ public class GuiSwaggiumGenerator extends GuiContainer
     public void initGui()
     {
         super.initGui();
-        this.buttonList.add(new GuiButton(0, this.guiLeft + 27 - 7, this.guiTop + 33, 20, 20, ""));
-        this.buttonList.add(new GuiButton(1, this.guiLeft + 68 + 7, this.guiTop + 33, 20, 20, ""));
+        this.buttonList.add(new GuiButton(0, this.guiLeft + 22, this.guiTop + 33, 19, 20, "-"));
+        this.buttonList.add(new GuiButton(1, this.guiLeft + 75, this.guiTop + 33, 19, 20, "+"));
     }
 
     @Override
@@ -83,12 +81,14 @@ public class GuiSwaggiumGenerator extends GuiContainer
             case 0:
                 if(container.getTile().getStockedSwagg() - amount >= 0)
                 {
-                    props.addSwaggLevel(amount, true);
-                    MineSwagg.network.sendToServer(new PacketSwaggGeneratorRequest(tile.xCoord, tile.yCoord, tile.zCoord, amount * -1));
+                    if(props.addSwaggLevel(amount, true, true))
+                    {
+                        MineSwagg.network.sendToServer(new PacketSwaggGeneratorRequest(tile.xCoord, tile.yCoord, tile.zCoord, amount * -1));
+                    }
                 }
                 break;
             case 1:
-                if(props.consumeSwaggLevel(amount, true))
+                if(props.consumeSwaggLevel(amount, true, false))
                 {
                     MineSwagg.network.sendToServer(new PacketSwaggGeneratorRequest(tile.xCoord, tile.yCoord, tile.zCoord, amount));
                 }

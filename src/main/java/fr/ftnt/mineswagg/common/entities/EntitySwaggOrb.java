@@ -63,10 +63,10 @@ public class EntitySwaggOrb extends EntityXPOrb
                 if(MinecraftForge.EVENT_BUS.post(new PlayerPickupXpEvent(player, this)))
                     return;
                 props = MineSwaggExtendedEntityPlayer.get(player);
-                player.xpCooldown = 2;
+                player.xpCooldown = 1;
                 this.worldObj.playSoundAtEntity(player, "random.orb", 0.1F, 0.5F * ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.8F));
                 player.onItemPickup(this, 1);
-                props.addSwaggAmount(this.swaggValue, true);
+                props.addSwaggAmount(this.swaggValue, true, true);
                 this.setDead();
             }
         }

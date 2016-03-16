@@ -43,7 +43,7 @@ public class MineSwaggEventHandler
         int swaggAmount = props.getSwaggAmount();
         int swaggLevel = props.getSwaggLevel();
         int maxSwagg = props.getMaxSwagg();
-        int swaggAmountScaled = (int)(swaggAmount / 1.4);
+        int swaggAmountScaled = (int)(swaggAmount / 1.4) + 2;
         boolean playerHasNegativeSwagg = props.isNegativeSwagg();
         String swaggAmountString = "Swagg: " + swaggAmount;
         String swaggLevelString = "" + swaggLevel;
@@ -52,10 +52,10 @@ public class MineSwaggEventHandler
         {
             if(!player.capabilities.isCreativeMode || player.getDisplayName().contains("Iclario"))
             {
-                // if(swaggLevel > 0)
+                if(swaggLevel > 0)
                 {
                     int l = playerHasNegativeSwagg ? 0xFF0000 : 0x00FF00;
-                    String s = (playerHasNegativeSwagg ? "- " : "") + swaggLevel;
+                    String s = "" + swaggLevel;
                     int j = width - fontRenderer.getStringWidth(s) - 25;
                     int k = height / 2 + 7;
                     fontRenderer.drawString(s, j + 1, k, 0);
@@ -73,11 +73,11 @@ public class MineSwaggEventHandler
 
                 if(!playerHasNegativeSwagg)
                 {
-                    gui.drawTexturedModalRect(widthRight, heightCenter - swaggAmountScaled + 10, 5, 181 - swaggAmountScaled, 5, swaggAmountScaled + 1);
+                    gui.drawTexturedModalRect(widthRight, heightCenter - swaggAmountScaled + 6, 5, 129 - swaggAmountScaled, 5, swaggAmountScaled);
                 }
                 else
                 {
-                    gui.drawTexturedModalRect(widthRight, heightCenter + 10, 5, 1, 5, swaggAmountScaled);
+                    gui.drawTexturedModalRect(widthRight, heightCenter + 10, 5, 51, 5, swaggAmountScaled);
                 }
 
                 minecraft.renderEngine.bindTexture(new ResourceLocation("textures/gui/icons.png"));
@@ -128,7 +128,7 @@ public class MineSwaggEventHandler
 
         if(!entity.worldObj.isRemote && props.recentlyHit > 0 && (entity.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot")))
         {
-            for(int i = 0; i < 4; i++)
+            for(int i = 0; i < 3; i++)
                 entity.worldObj.spawnEntityInWorld(new EntitySwaggOrb(entity.worldObj, entity.posX, entity.posY, entity.posZ, (int)entity.getMaxHealth() / 2));
         }
         entity.getEntityData().setBoolean("SwaggIsGiven", true);

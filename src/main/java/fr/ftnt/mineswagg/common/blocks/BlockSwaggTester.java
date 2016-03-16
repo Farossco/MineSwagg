@@ -40,7 +40,7 @@ public class BlockSwaggTester extends Block
             }
             else
             {
-                player.addChatMessage(new ChatComponentText((world.isRemote ? "Client: " : "Server: ") + "Amount: " + props.getSwaggAmount() + " / Level: " + props.getSwaggLevel() + " / Negative: " + props.isNegativeSwagg()));
+                player.addChatMessage(new ChatComponentText((world.isRemote ? "Client: " : "Server: ") + "Amount: " + props.getSwaggAmount() + " / Level: " + props.getSwaggLevel() + (props.isNegativeSwagg() ? " / Negative swagg" : " / Positive swagg")));
             }
 
         }
@@ -56,13 +56,11 @@ public class BlockSwaggTester extends Block
             }
             else
             {
-
+                if(!world.isRemote)
+                {
+                    props.consumeSwaggLevel(1, true);
+                }
             }
-            if(!world.isRemote)
-            {
-                props.consumeSwaggLevel(1, true);
-            }
-
         }
 
         // System.out.println((!world.isRemote ? "Server: " : "Client: ") + "Swagg: " + props.getSwaggAmount());

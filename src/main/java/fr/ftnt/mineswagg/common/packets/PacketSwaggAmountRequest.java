@@ -81,6 +81,7 @@ public class PacketSwaggAmountRequest implements IMessage
             MineSwaggExtendedEntityPlayer props = MineSwaggExtendedEntityPlayer.get(player);
             int swaggAmount = props.getSwaggAmount();
             int swaggLevel = props.getSwaggLevel();
+            boolean negativeSwagg = props.isNegativeSwagg();
             if(updateSwaggAmount)
             {
                 if(add)

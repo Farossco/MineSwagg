@@ -82,25 +82,38 @@ public class MineSwaggCommands extends CommandBase implements ICommand
             {
                 if(negative)
                 {
-                    props.consumeSwaggLevel(i, true);
+                    func_152373_a(sender, this, "commands.swagg.success.negative.levels" + (i <= 1 ? ".singular" : ""), new Object[] {Integer.valueOf(i), player.getCommandSenderName()});
+                    if(props.consumeSwaggLevel(i, true, true))
+                    {
+                        func_152373_a(sender, this, "commands.swagg.nowNegative", new Object[] {Integer.valueOf(i), player.getCommandSenderName()});
+                    }
                 }
                 else
                 {
-                    props.addSwaggLevel(i, true);
                     func_152373_a(sender, this, "commands.swagg.success.levels" + (i <= 1 ? ".singular" : ""), new Object[] {Integer.valueOf(i), player.getCommandSenderName()});
+                    if(props.addSwaggLevel(i, true, true))
+                    {
+                        func_152373_a(sender, this, "commands.swagg.nowPositive", new Object[] {Integer.valueOf(i), player.getCommandSenderName()});
+                    }
                 }
             }
             else
             {
                 if(negative)
                 {
-                    props.consumeSwaggAmount(i, true);
                     func_152373_a(sender, this, "commands.swagg.success.negative", new Object[] {Integer.valueOf(i), player.getCommandSenderName()});
+                    if(props.consumeSwaggAmount(i, true, true))
+                    {
+                        func_152373_a(sender, this, "commands.swagg.nowNegative", new Object[] {Integer.valueOf(i), player.getCommandSenderName()});
+                    }
                 }
                 else
                 {
-                    props.addSwaggAmount(i, true);
                     func_152373_a(sender, this, "commands.swagg.success", new Object[] {Integer.valueOf(i), player.getCommandSenderName()});
+                    if(props.addSwaggAmount(i, true, true))
+                    {
+                        func_152373_a(sender, this, "commands.swagg.nowPositive", new Object[] {Integer.valueOf(i), player.getCommandSenderName()});
+                    }
                 }
             }
         }

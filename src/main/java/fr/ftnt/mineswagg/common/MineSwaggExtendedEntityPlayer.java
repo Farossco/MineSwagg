@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.MinecraftForge;
+import scala.tools.nsc.util.StackTracing;
 
 public class MineSwaggExtendedEntityPlayer implements IExtendedEntityProperties
 {
@@ -63,90 +64,126 @@ public class MineSwaggExtendedEntityPlayer implements IExtendedEntityProperties
 
     public boolean consumeSwaggAmount(int amount, boolean sync)
     {
-        soundPlayed = false;
-        for(int i = 0; i < amount; i++)
+        MineSwagg.logger.error("This have to be changed !");
+        return consumeSwaggAmount(amount, sync, false);
+    }
+
+    public boolean consumeSwaggAmount(int amount, boolean sync, boolean canGoNegative)
+    {
+        boolean sufficient = amount <= this.swaggAmount + swaggLevel * maxSwagg && isPositiveSwagg();
+
+        if(sufficient || canGoNegative)
         {
-            consumeOneSwaggAmount();
+            soundPlayed = false;
+            for(int i = 0; i < amount; i++)
+            {
+                if(isNegativeSwagg())
+                {
+                    this.swaggAmount++;
+                }
+                else if(this.swaggAmount == 0 && this.swaggLevel == 0)
+                {
+                    this.swaggAmount++;
+                    this.setNegativeSwagg();
+                }
+                else
+                {
+                    this.swaggAmount--;
+                }
+            }
         }
+
+        testLevelUp();
 
         if(sync)
             syncWithServer();
 
-        return true;
-    }
-
-    private boolean consumeOneSwaggAmount()
-    {
-        if(isNegativeSwagg())
-        {
-            this.swaggAmount++;
-        }
-        else if(this.swaggAmount == 0 && this.swaggLevel == 0)
-        {
-            this.swaggAmount++;
-            this.setNegativeSwagg();
-        }
-        else
-        {
-            this.swaggAmount--;
-        }
-        testLevelUp();
-
-        return true;
+        return canGoNegative ? !sufficient : sufficient;
     }
 
     public boolean consumeSwaggLevel(int amount, boolean sync)
     {
         return consumeSwaggAmount(amount * maxSwagg, sync);
     }
-    
-    public void addSwaggAmount(int amount, boolean sync)
+
+    public boolean consumeSwaggLevel(int amount, boolean sync, boolean canGoNegative)
     {
+        return consumeSwaggAmount(amount * maxSwagg, sync, canGoNegative);
+    }
+
+    /**
+     * Add the specified amount of swagg to the player.
+     * @param amount The amount of swagg to give to the player.
+     * @param sync Specify if the informations have to be synced to client or server.
+     */
+    @Deprecated
+    public boolean addSwaggAmount(int amount, boolean sync)
+    {
+        MineSwagg.logger.error("This have to be changed !");
+        return addSwaggAmount(amount, sync, true);
+    }
+
+    /**
+     * Add the specified amount of swagg to the player.
+     * @param amount The amount of swagg to give to the player.
+     * @param sync Specify if the informations have to be synced to client or server.
+     * @param canGoPositive Specify if the swagg can switch from negative to positive.
+     * 
+     */
+    public boolean addSwaggAmount(int amount, boolean sync, boolean canGoPositive)
+    {
+        boolean sufficient = amount <= this.swaggAmount + swaggLevel * maxSwagg && isNegativeSwagg();
+
         soundPlayed = false;
-        for(int i = 0; i < amount; i++)
+        if(sufficient || canGoPositive)
         {
-            addOneSwaggAmount();
+            for(int i = 0; i < amount; i++)
+            {
+                if(isPositiveSwagg())
+                {
+                    this.swaggAmount++;
+                }
+                else if(this.swaggAmount == 0 && this.swaggLevel == 0)
+                {
+                    this.swaggAmount++;
+                    this.setPositiveSwagg();
+                }
+                else
+                {
+                    this.swaggAmount--;
+                }
+            }
         }
+        testLevelUp();
 
         if(sync)
             syncWithServer();
+
+        return canGoPositive ? !sufficient : sufficient;
     }
 
-    private void addOneSwaggAmount()
+    public boolean addSwaggLevel(int amount, boolean sync)
     {
-        if(isPositiveSwagg())
-        {
-            this.swaggAmount++;
-        }
-        else if(this.swaggAmount == 0 && this.swaggLevel == 0)
-        {
-            this.swaggAmount++;
-            this.setPositiveSwagg();
-        }
-        else
-        {
-            this.swaggAmount--;
-        }
-        testLevelUp();
+        return addSwaggAmount(amount * maxSwagg, sync);
     }
 
-    public void addSwaggLevel(int amount, boolean sync)
+    public boolean addSwaggLevel(int amount, boolean sync, boolean canGoPositive)
     {
-        addSwaggAmount(amount * maxSwagg, sync);
+        return addSwaggAmount(amount * maxSwagg, sync, canGoPositive);
     }
 
     private void testLevelUp()
     {
-        if(swaggAmount >= maxSwagg)
+        while(swaggAmount >= maxSwagg)
         {
             swaggAmount -= maxSwagg;
             this.swaggLevel++;
-            
+
             playSound();
             soundPlayed = true;
         }
 
-        if(swaggAmount < 0)
+        while(swaggAmount < 0)
         {
             swaggAmount += maxSwagg;
             swaggLevel--;

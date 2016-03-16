@@ -139,7 +139,7 @@ public class TileEntitySwaggiumGenerator extends TileEntity implements IInventor
     @Override
     public String getInventoryName()
     {
-        return this.hasCustomInventoryName() ? this.customName : "container.swaggGenerator";
+        return this.hasCustomInventoryName() ? this.customName : "container.swaggiumGenerator";
     }
 
     @Override
