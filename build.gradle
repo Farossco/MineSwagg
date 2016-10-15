@@ -27,13 +27,10 @@ String min = new File('version/min').getText('UTF-8')
 String rev = new File('version/rev').getText('UTF-8')
 
 
-def versionnobuild=maj+'.'+min+'.'+rev
+String bn  = (project.hasProperty('buildNumber') ? project.buildNumber : (System.getenv().BUILD_NUMBER != null) ? System.getenv().BUILD_NUMBER : "NOBUILD")
 
-if (project.hasProperty('buildNumber')) {
- version = versionnobuild + "." + project.buildNumber
-} else {
- version = versionnobuild + "." + System.getenv().BUILD_NUMBER
-}
+def versionnobuild = maj + '.' + min + '.' + rev
+version = versionnobuild + '.' + bn
 
 group= "fr.ftnt.mineswagg" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "MineSwagg"
